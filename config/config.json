@@ -1,0 +1,21 @@
+{
+    "database":{
+        "username" : "root",
+        "password" : "",
+        "host" :"localhost",
+        "port" : "3306",
+        "dbName" : "db_class_reminder"
+    },
+    "firebase":{
+        "url": "https://fcm.googleapis.com/fcm/send",
+        "key":"key=AAAAPcB00V4:APA91bH79Oiv67Zfh3kP6X6HLoX6KT6m4aWoW2yYvTk9Jj_Cscg3u2ztsFYwzJpK2EWCzvqSfZk03PIxN5MluLBZpoYciEHwYtug-QbJb3L1OBIkrpDpN9cokTtQM2syoBXjlgnEfLuO"
+    },
+    "rundeck":{
+        "url":"http://localhost:4440",
+        "user":"admin",
+        "password":"admin",
+        "token":"RXBIVZtXYboLIB6IDqwD7lJ93XfKZust",
+        "project_name":"class_reminder",
+        "timeout": 20
+    }
+}

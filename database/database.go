@@ -1,0 +1,161 @@
+package database
+
+import (
+	"class-reminder-be/database/helper"
+	"class-reminder-be/model"
+	"database/sql"
+	"fmt"
+)
+
+func GeneralSelect(query string, args ...interface{}) (map[string]interface{}, error) {
+	rows, err := helper.Db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	columns, err := rows.Columns()
+	if err != nil {
+		return nil, err
+	}
+
+	values := make([]interface{}, len(columns))
+	valuePointers := make([]interface{}, len(columns))
+
+	for i := range values {
+		valuePointers[i] = &values[i]
+	}
+
+	if rows.Next() { // Move to the first row
+		err = rows.Scan(valuePointers...)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return nil, fmt.Errorf("record not found")
+			}
+			return nil, err
+		}
+
+		data := make(map[string]interface{})
+		for i, column := range columns {
+			val := values[i]
+			data[column] = val
+		}
+
+		return data, nil
+	}
+
+	return nil, fmt.Errorf("no rows found")
+}
+
+func GeneralSelectRows(query string, args ...interface{}) ([]map[string]interface{}, error) {
+	rows, err := helper.Db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	columns, err := rows.Columns()
+	if err != nil {
+		return nil, err
+	}
+
+	var result []map[string]interface{}
+
+	for rows.Next() {
+		values := make([]interface{}, len(columns))
+		valuePointers := make([]interface{}, len(columns))
+
+		for i := range values {
+			valuePointers[i] = &values[i]
+		}
+
+		err := rows.Scan(valuePointers...)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return nil, fmt.Errorf("record not found")
+			}
+			return nil, err
+		}
+
+		data := make(map[string]interface{})
+		for i, column := range columns {
+			val := values[i]
+			data[column] = val
+		}
+
+		result = append(result, data)
+	}
+
+	if len(result) == 0 {
+		return nil, fmt.Errorf("no rows found")
+	}
+
+	return result, nil
+}
+
+func GeneralQuery(query string, args ...interface{}) error {
+	rows, err := helper.Db.Query(query, args...)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	return nil
+}
+
+func GetEventFromDB(idEvent int) (map[string]interface{}, error) {
+	query := "SELECT e.*, is_specific_user FROM tbl_event e JOIN tbl_event_type et ON e.id_event_type = et.id WHERE e.id = ?"
+	data, err := GeneralSelect(query, idEvent)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func GetUserEventFromDB(idEvent int) ([]map[string]interface{}, error) {
+	query := "SELECT ue.username, un.notif_id, un.is_allowed FROM tbl_user_event ue JOIN tbl_user_notif un ON ue.username = un.username WHERE is_allowed = 1 and ue.id_event = ?"
+	data, err := GeneralSelectRows(query, idEvent)
+	if err != nil {
+		return nil, err
+	}
+
+	if data == nil {
+		return nil, nil // Handle the case where no data was found for the given idEvent.
+	}
+
+	// eventUser := &EventUser{
+	// 	Username:   data["username"].(string),
+	// 	Notif_id:   string(data["notif_id"].([]uint8)), // Convert []uint8 to string
+	// 	Is_allowed: data["is_allowed"].(int),
+	// }
+
+	return data, nil
+}
+
+func GetUserNotifFromDB() ([]map[string]interface{}, error) {
+	query := "SELECT username, notif_id, is_allowed FROM tbl_user_notif where is_allowed = 1"
+	data, err := GeneralSelectRows(query)
+	if err != nil {
+		return nil, err
+	}
+
+	if data == nil {
+		return nil, nil // Handle the case where no data was found for the given idEvent.
+	}
+	return data, nil
+}
+
+func InsertEventToDB(data model.EventCreateRequest, jobEvery string) (int64, error) {
+	query := "INSERT INTO tbl_event (title, description, schedule, job_every, id_event_type) VALUES (?, ?, ?, ?,?)"
+	result, err := helper.Db.Exec(query, data.Title, data.Description, data.Schedule, jobEvery, data.IdEventType)
+	if err != nil {
+		return 0, err
+	}
+
+	lastInsertID, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return lastInsertID, nil
+}
