@@ -159,3 +159,21 @@ func InsertEventToDB(data model.EventCreateRequest, jobEvery string) (int64, err
 
 	return lastInsertID, nil
 }
+
+func GetUserFromDB(username string) (map[string]interface{}, error) {
+	query := "SELECT * FROM tbl_user WHERE username = ?"
+	result, err := GeneralSelect(query, username)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func UpdateJwtToDB(username string, jwt string) error {
+	query := "UPDATE tbl_user SET token_key = ? WHERE username = ?"
+	_, err := helper.Db.Exec(query, jwt, username)
+	if err != nil {
+		return err
+	}
+	return nil
+}

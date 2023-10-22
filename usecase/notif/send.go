@@ -14,7 +14,6 @@ func Send(eventId int) (string, error) {
 	if err != nil {
 		fmt.Print("send", err)
 	}
-	fmt.Println(event["is_specific_user"])
 	is_specific := event["is_specific_user"].(int64)
 	var notifArr []string
 	// if specific user, check tbl_user_event
