@@ -2,6 +2,7 @@ package database
 
 import (
 	"class-reminder-be/database/helper"
+	library "class-reminder-be/library"
 	"class-reminder-be/model"
 	"database/sql"
 	"fmt"
@@ -170,10 +171,27 @@ func GetUserFromDB(username string) (map[string]interface{}, error) {
 }
 
 func UpdateJwtToDB(username string, jwt string) error {
-	query := "UPDATE tbl_user SET token_key = ? WHERE username = ?"
-	_, err := helper.Db.Exec(query, jwt, username)
+	query := "UPDATE tbl_user SET token_key = ?, last_login=? WHERE username = ?"
+	_, err := helper.Db.Exec(query, jwt, library.CurrTimestamp(), username)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func UpdateNotifId(username string, notifId string) (string, error) {
+	query := "UPDATE tbl_user_notif SET notif_id = ?, last_update=?, is_allowed=1 WHERE username = ?"
+	result, err := helper.Db.Exec(query, notifId, library.CurrTimestamp(), username)
+	if err != nil {
+		return "01", err
+	}
+	// Check the number of rows affected
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return "01", err
+	}
+	if rowsAffected == 0 {
+		return "02", err
+	}
+	return "", nil
 }

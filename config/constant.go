@@ -7,6 +7,11 @@ const (
 	RCSnackbar   = "12"
 	DescSnackbar = "Error, something happen"
 
+	RCSession   = "05"
+	DescSession = "Session habis, silahkan login kembali"
+
 	JwtKey      = "sadadakdmaksdksadak"
 	JwtDuration = 2
+
+	V1Route = "/api/v1/"
 )
