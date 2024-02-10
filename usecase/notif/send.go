@@ -14,19 +14,29 @@ func Send(eventId int) (string, error) {
 	if err != nil {
 		fmt.Print("send", err)
 	}
+	trxTypeDB, err := database.GetTrxTypeFromDB(eventId)
+	trxTypeuint := trxTypeDB["trx_type"].([]uint8)
+	trxType := string(trxTypeuint)
+	if err != nil {
+		fmt.Print("send", err)
+	}
 	is_specific := event["is_specific_user"].(int64)
 	var notifArr []string
+	var userEvent []map[string]interface{}
 	// if specific user, check tbl_user_event
 	// call tbl_user_notif
 	if is_specific == 1 {
-		userEvent, err := database.GetUserEventFromDB(eventId)
+		userEvent, err = database.GetUserEventFromDB(eventId)
+		fmt.Println(userEvent)
 		if err != nil {
 			fmt.Print("send", err)
+			return "failed", err
 		}
-		fmt.Println(userEvent[0]["notif_id"])
+		// fmt.Println(userEvent[0]["notif_id"])
 		for i := 0; i < len(userEvent); i++ {
 			// Assuming userEvent["notif_id"] is a byte slice ([]uint8)
-			notifIDsBytes := userEvent[i]["notif_id"].([]uint8)
+			notifIDsBytes := userEvent[i]["no_hp"].([]uint8)
+
 			notifIDsString := string(notifIDsBytes)
 			fmt.Println(notifIDsString)
 
@@ -39,13 +49,16 @@ func Send(eventId int) (string, error) {
 
 		// else, blast to all user in tbl_user_notif
 	} else {
-		userNotif, err := database.GetUserNotifFromDB()
+		fmt.Println("masuk else")
+		userEvent, err = database.GetUserNotifFromDB()
 		if err != nil {
 			fmt.Print("send", err)
+			return "failed", err
 		}
-		for i := 0; i < len(userNotif); i++ {
+		for i := 0; i < len(userEvent); i++ {
 			// Assuming userEvent["notif_id"] is a byte slice ([]uint8)
-			notifIDsBytes := userNotif[i]["notif_id"].([]uint8)
+			notifIDsBytes := userEvent[i]["no_hp"].([]uint8)
+			userEvent[i]["event"] = event["title"]
 			notifIDsString := string(notifIDsBytes)
 			fmt.Println(notifIDsString)
 
@@ -55,10 +68,13 @@ func Send(eventId int) (string, error) {
 
 		}
 	}
-	// call to firebase
-	response, err := repository.SendToFirebase(notifArr)
+
+	// call to whatsapp
+	// response, err := repository.SendToFirebase(notifArr)
+	err = repository.SendToWhatsapp(notifArr, userEvent, trxType)
 	if err != nil {
 		return "", err
 	}
+	response := "success"
 	return response, err
 }

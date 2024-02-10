@@ -6,6 +6,13 @@ type FirebaseRequest struct {
 	Notification    FirebaseNotification `json:"notification"`
 }
 
+type WhatsappRequest struct {
+	ApiKey  string `json:"api_key"`
+	Sender  string `json:"sender"`
+	Number  string `json:"number"`
+	Message string `json:"message"`
+}
+
 type FirebaseNotification struct {
 	Body     string `json:"body"`
 	Title    string `json:"title"`

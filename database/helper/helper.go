@@ -3,7 +3,10 @@ package helper
 import (
 	"class-reminder-be/config"
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"strings"
+	"time"
 )
 
 var Db *sql.DB
@@ -45,6 +48,46 @@ func InitDB() error {
 	}
 
 	return nil
+}
+
+func MappingMessage(content string, additionalDataJSON string, data map[string]interface{}) (string, error) {
+	// Parse additional data JSON
+	var additionalData map[string]string
+	if err := json.Unmarshal([]byte(additionalDataJSON), &additionalData); err != nil {
+		return "", err
+	}
+
+	// Replace placeholders in the content string
+	for key := range additionalData {
+		placeholder := "$" + key
+
+		// Convert the interface{} value to a string
+		strValue := string(data[key].([]uint8))
+
+		content = strings.ReplaceAll(content, placeholder, strValue)
+	}
+
+	return content, nil
+}
+
+// toString converts an interface{} value to a string
+func toString(value interface{}) (string, bool) {
+	switch v := value.(type) {
+	case string:
+		return v, true
+	case time.Time:
+		return v.Format(time.RFC3339), true // Format time as a string
+	case fmt.Stringer:
+		return v.String(), true
+	case sql.NullTime:
+		if v.Valid {
+			return v.Time.Format(time.RFC3339), true // Format time as a string if it is valid
+		}
+		return "", false
+	default:
+		// Handle unknown types
+		return fmt.Sprintf("%v", v), true
+	}
 }
 
 // CloseDB closes the database connection

@@ -17,5 +17,10 @@
         "token":"RXBIVZtXYboLIB6IDqwD7lJ93XfKZust",
         "project_name":"class_reminder",
         "timeout": 20
+    },
+    "whatsapp":{
+        "url":"https://wa.srv25.wapanels.com/send-message",
+        "api_key":"fDY8lbERw3urkXWtlWRaP127UUhUJt",
+        "sender":"087775974516"
     }
 }

@@ -44,7 +44,6 @@ func GeneralSelect(query string, args ...interface{}) (map[string]interface{}, e
 
 		return data, nil
 	}
-
 	return nil, fmt.Errorf("no rows found")
 }
 
@@ -114,7 +113,15 @@ func GetEventFromDB(idEvent int) (map[string]interface{}, error) {
 }
 
 func GetUserEventFromDB(idEvent int) ([]map[string]interface{}, error) {
-	query := "SELECT ue.username, un.notif_id, un.is_allowed FROM tbl_user_event ue JOIN tbl_user_notif un ON ue.username = un.username WHERE is_allowed = 1 and ue.id_event = ?"
+	// query := "SELECT ue.username, un.notif_id, un.is_allowed, no_hp FROM tbl_user_event ue JOIN tbl_user_notif un ON ue.username = un.username WHERE is_allowed = 1 and ue.id_event = ?"
+	query := `
+	SELECT name, nim, title AS class, SCHEDULE AS time, no_hp
+	FROM tbl_user_event ue 
+	JOIN tbl_user_notif un ON ue.username = un.username
+	JOIN tbl_user_student us ON ue.username = us.username
+	JOIN tbl_event e ON ue.id_event=e.id
+	WHERE is_allowed = 1 and ue.id_event = ?
+	`
 	data, err := GeneralSelectRows(query, idEvent)
 	if err != nil {
 		return nil, err
@@ -133,8 +140,25 @@ func GetUserEventFromDB(idEvent int) ([]map[string]interface{}, error) {
 	return data, nil
 }
 
+func GetContentFromDB(trxType string) (map[string]interface{}, error) {
+	query := "SELECT * FROM tbl_content_notif WHERE trx_type=?"
+	data, err := GeneralSelect(query, trxType)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+func GetTrxTypeFromDB(idEvent int) (map[string]interface{}, error) {
+	query := "SELECT trx_type FROM tbl_event e JOIN tbl_event_type et ON e.id_event_type=et.id WHERE e.id = ?"
+	data, err := GeneralSelect(query, idEvent)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
 func GetUserNotifFromDB() ([]map[string]interface{}, error) {
-	query := "SELECT username, notif_id, is_allowed FROM tbl_user_notif where is_allowed = 1"
+	query := "SELECT username, notif_id, no_hp, is_allowed FROM tbl_user_notif where is_allowed = 1"
 	data, err := GeneralSelectRows(query)
 	if err != nil {
 		return nil, err
@@ -194,4 +218,40 @@ func UpdateNotifId(username string, notifId string) (string, error) {
 		return "02", err
 	}
 	return "", nil
+}
+
+func GetNumberForBlast() ([]map[string]interface{}, error) {
+	query := "SELECT no_hp from tbl_user_notif where is_allowed = 1"
+	data, err := GeneralSelectRows(query)
+	if err != nil {
+		return nil, err
+	}
+
+	if data == nil {
+		return nil, nil // Handle the case where no data was found for the given idEvent.
+	}
+	return data, nil
+}
+
+func InsertBlastHistory(message string, user_success int) error {
+	query := "INSERT INTO tbl_blast_history (message, user_success, created_at) VALUES (?, ?, ?)"
+	_, err := helper.Db.Exec(query, message, user_success, library.CurrTimestamp())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetBlastHistory() ([]map[string]interface{}, error) {
+	query := "SELECT * from tbl_blast_history ORDER BY id DESC"
+	data, err := GeneralSelectRows(query)
+	if err != nil {
+		return nil, err
+	}
+
+	if data == nil {
+		return nil, nil // Handle the case where no data was found for the given idEvent.
+	}
+	return data, nil
 }

@@ -16,7 +16,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
-
 	// Decode the JSON body
 	var request model.LoginRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
@@ -31,7 +30,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("token", errCode)
 	if errCode != "" {
 		_, responseJSON := library.SetResponse(config.RCSnackbar, config.DescSnackbar, map[string]interface{}{})
-		if errCode == "02" {
+		if errCode == "UZ" {
 			_, responseJSON = library.SetResponse(config.RCSnackbar, "Username atau password salah", map[string]interface{}{})
 		}
 		w.Header().Set("Content-Type", "application/json")

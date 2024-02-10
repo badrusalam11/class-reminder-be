@@ -13,7 +13,7 @@ func Login(loginData model.LoginRequest) (string, string) {
 	// get data tbl_user by username
 	data, err := database.GetUserFromDB(loginData.Username)
 	if err != nil {
-		return "", "01"
+		return "", "UZ"
 	}
 	fmt.Println("data", data)
 	hashPassword := data["password"].([]byte)
@@ -24,19 +24,19 @@ func Login(loginData model.LoginRequest) (string, string) {
 	err = bcrypt.CompareHashAndPassword([]byte(hashPasswordString), []byte(loginData.Password))
 	if err != nil {
 		// Passwords not match
-		return "", "02"
+		return "", "UZ" // unauthorize
 	}
 	// generate token
 	token, err := repository.GenerateToken(loginData.Username)
 	fmt.Println("generate token", token)
 	if err != nil {
-		return "", "01"
+		return "", "DBR"
 	}
 	// update to tbl_user
 	err = database.UpdateJwtToDB(loginData.Username, token)
 	if err != nil {
 		fmt.Println(err)
-		return "", "01"
+		return "", "DBR"
 	}
 	// retrieve token
 	return token, ""

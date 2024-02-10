@@ -15,3 +15,7 @@ type NotifResponse struct {
 	Status string `json:"status"`
 	// Message string `json:"message"`
 }
+
+type BlastRequest struct {
+	Message string `json:"message" validate:"required"`
+}

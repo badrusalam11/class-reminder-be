@@ -16,6 +16,9 @@ var (
 	RundeckProjectName string
 	RundeckToken       string
 	RundeckTimeout     int
+	WhatsappURL        string
+	WhatsappApiKey     string
+	WhatsappSender     string
 )
 
 func GetString(key string) string {
@@ -42,4 +45,7 @@ func init() {
 	RundeckProjectName = GetString(`rundeck.project_name`)
 	RundeckToken = GetString(`rundeck.token`)
 	RundeckTimeout = viper.GetInt(`rundeck.project_name`)
+	WhatsappURL = viper.GetString(`whatsapp.url`)
+	WhatsappApiKey = viper.GetString(`whatsapp.api_key`)
+	WhatsappSender = viper.GetString(`whatsapp.sender`)
 }
