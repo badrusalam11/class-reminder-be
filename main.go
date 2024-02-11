@@ -4,8 +4,10 @@ import (
 	"class-reminder-be/config"
 	database "class-reminder-be/database/helper"
 	authHandler "class-reminder-be/handler/auth"
+	courseHandler "class-reminder-be/handler/course"
 	eventHandler "class-reminder-be/handler/event"
 	notifHandler "class-reminder-be/handler/notif"
+	userHandler "class-reminder-be/handler/user"
 	middleware "class-reminder-be/middleware"
 
 	"net/http"
@@ -23,6 +25,13 @@ func main() {
 	apiCallerWithSession(config.V1Route+"event/create", eventHandler.Create)
 	apiCallerWithSession(config.V1Route+"notif/blast", notifHandler.Blast)
 	apiCallerWithSession(config.V1Route+"notif/blast/history", notifHandler.BlastHistory)
+
+	apiCallerWithSession(config.V1Route+"course/list", courseHandler.List)
+	apiCallerWithSession(config.V1Route+"user/register", userHandler.Register)
+	apiCallerWithSession(config.V1Route+"user/show", userHandler.Show)
+	apiCallerWithSession(config.V1Route+"user/show/detail", userHandler.Detail)
+	apiCallerWithSession(config.V1Route+"user/edit", userHandler.Edit)
+	apiCallerWithSession(config.V1Route+"user/delete", userHandler.Delete)
 
 	// API route with CORS middleware
 	// http.Handle(config.V1Route+"login", middleware.CorsEnabled(http.HandlerFunc(authHandler.Login)))

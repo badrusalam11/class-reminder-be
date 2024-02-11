@@ -6,6 +6,7 @@ import (
 	"class-reminder-be/model"
 	usecase "class-reminder-be/usecase/notif"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -15,7 +16,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
-
+	fmt.Println(r.Body)
 	// Decode the JSON body
 	var request model.RegisterNotifRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
@@ -23,6 +24,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	fmt.Println("request", request)
 	// do business logic
 	errCode, err := usecase.Register(request)
 	if err != nil || errCode != "" {
