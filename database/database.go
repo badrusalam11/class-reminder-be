@@ -115,7 +115,7 @@ func GetEventFromDB(idEvent int) (map[string]interface{}, error) {
 func GetUserEventFromDB(idEvent int) ([]map[string]interface{}, error) {
 	// query := "SELECT ue.username, un.notif_id, un.is_allowed, no_hp FROM tbl_user_event ue JOIN tbl_user_notif un ON ue.username = un.username WHERE is_allowed = 1 and ue.id_event = ?"
 	query := `
-	SELECT name, nim, title AS class, SCHEDULE AS time, no_hp
+	SELECT name, us.nim, title AS class, SCHEDULE AS time, no_hp
 	FROM tbl_user_event ue 
 	JOIN tbl_user_notif un ON ue.username = un.username
 	JOIN tbl_user_student us ON ue.username = us.username
@@ -394,4 +394,20 @@ func GetDetailStudentInfo(nim string) ([]map[string]interface{}, error) {
 		return nil, nil // Handle the case where no data was found for the given idEvent.
 	}
 	return data, nil
+}
+
+func InsertCourseToDB(title string, description string, schedule string, day string, job_day string) (id int64, err error) {
+	//insert to tbl_user_student
+	query := "INSERT INTO tbl_event (title, description, schedule, job_every, event_day, id_event_type) VALUES (?, ?, ?, ?, ?, ?)"
+	result, err := helper.Db.Exec(query, title, description, schedule, job_day, day, 1)
+	if err != nil {
+		return 0, err
+	}
+
+	lastInsertID, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return lastInsertID, nil
 }

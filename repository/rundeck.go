@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 )
 
 // const (
@@ -108,10 +107,11 @@ func generateJobId(id int64, title string) string {
 	idString := strconv.FormatInt(id, 10)
 	titleString := strings.ReplaceAll(title, " ", "_")
 	// Get the current time
-	currentTime := time.Now()
-	// Format the time as DDMMYYYY
-	formattedDate := currentTime.Format("02012006")
-	job := idString + ":" + titleString + "_" + formattedDate
+	// currentTime := time.Now()
+	// // Format the time as DDMMYYYY
+	// formattedDate := currentTime.Format("02012006")
+	// job := idString + ":" + titleString + "_" + formattedDate
+	job := idString + ":" + titleString
 	return job
 }
 

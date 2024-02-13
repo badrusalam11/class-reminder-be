@@ -26,12 +26,14 @@ func main() {
 	apiCallerWithSession(config.V1Route+"notif/blast", notifHandler.Blast)
 	apiCallerWithSession(config.V1Route+"notif/blast/history", notifHandler.BlastHistory)
 
-	apiCallerWithSession(config.V1Route+"course/list", courseHandler.List)
 	apiCallerWithSession(config.V1Route+"user/register", userHandler.Register)
 	apiCallerWithSession(config.V1Route+"user/show", userHandler.Show)
 	apiCallerWithSession(config.V1Route+"user/show/detail", userHandler.Detail)
 	apiCallerWithSession(config.V1Route+"user/edit", userHandler.Edit)
 	apiCallerWithSession(config.V1Route+"user/delete", userHandler.Delete)
+
+	apiCallerWithSession(config.V1Route+"course/list", courseHandler.List)
+	apiCallerWithSession(config.V1Route+"course/create", courseHandler.Create)
 
 	// API route with CORS middleware
 	// http.Handle(config.V1Route+"login", middleware.CorsEnabled(http.HandlerFunc(authHandler.Login)))
