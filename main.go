@@ -34,6 +34,10 @@ func main() {
 
 	apiCallerWithSession(config.V1Route+"course/list", courseHandler.List)
 	apiCallerWithSession(config.V1Route+"course/create", courseHandler.Create)
+	apiCallerWithSession(config.V1Route+"course/edit", courseHandler.Edit)
+	apiCallerWithSession(config.V1Route+"course/delete", courseHandler.Delete)
+	apiCallerWithSession(config.V1Route+"course/show", courseHandler.Show)
+	apiCallerWithSession(config.V1Route+"course/show/detail", courseHandler.Detail)
 
 	// API route with CORS middleware
 	// http.Handle(config.V1Route+"login", middleware.CorsEnabled(http.HandlerFunc(authHandler.Login)))

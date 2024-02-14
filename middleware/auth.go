@@ -24,13 +24,13 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			// Check the signing method and return the secret key.
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("Invalid signing method")
+				return nil, fmt.Errorf("invalid signing method")
 			}
 			return secretKey, nil
 		})
 
 		if err != nil {
-			_, responseJSON := library.SetResponse(config.RCSession, config.DescSession, map[string]interface{}{})
+			_, responseJSON := library.SetResponse(config.RCSession, config.DescSession, []map[string]interface{}{})
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			w.Write(responseJSON)

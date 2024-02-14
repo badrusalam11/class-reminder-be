@@ -28,10 +28,11 @@ func Create(event model.EventCreateRequest) (string, error) {
 
 	// create job to rundeck
 	jobString := strings.Join(event.JobEvery, ",")
-	err = repository.CreateJobToRundeck(id, event.Title, event.Schedule, jobString)
+	jobId, err := repository.CreateJobToRundeck(id, event.Title, event.Schedule, jobString)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
 	}
+	fmt.Println(jobId)
 	return "success", nil
 }

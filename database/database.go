@@ -269,6 +269,19 @@ func GetCourse() ([]map[string]interface{}, error) {
 	return data, nil
 }
 
+func GetCourseById(id int64) (map[string]interface{}, error) {
+	query := "SELECT * from tbl_event WHERE id=?"
+	data, err := GeneralSelect(query, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if data == nil {
+		return nil, nil // Handle the case where no data was found for the given idEvent.
+	}
+	return data, nil
+}
+
 func RegisterStudent(name string, nim string, no_hp string, major string, class []int) error {
 	//insert to tbl_user_student
 	query := "INSERT INTO tbl_user_student (username, name, nim, major) VALUES (?, ?, ?, ?)"
@@ -410,4 +423,72 @@ func InsertCourseToDB(title string, description string, schedule string, day str
 	}
 
 	return lastInsertID, nil
+}
+
+func InsertToTableJob(job_name string, job_id string, id_event int64) error {
+	//insert to tbl_job
+	query := "INSERT INTO tbl_job (job_name, job_id, id_event) VALUES (?, ?, ?)"
+	_, err := helper.Db.Exec(query, job_name, job_id, id_event)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateCourseToDB(id int64, title string, description string, schedule string, day string, job_day string) error {
+	//insert to tbl_user_student
+	query := "UPDATE tbl_event SET title=?, description=?, schedule=?, job_every=?, event_day=?, id_event_type=? WHERE id=?"
+	_, err := helper.Db.Exec(query, title, description, schedule, job_day, day, 1, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func UpdateJob(job_name string, job_id string, idEvent int64) error {
+	//insert to tbl_user_student
+	query := "UPDATE tbl_job SET job_name=?, job_id=? WHERE id_event=?"
+	_, err := helper.Db.Exec(query, job_name, job_id, idEvent)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetJob(idEvent int64) (map[string]interface{}, error) {
+	query := "SELECT * FROM tbl_job WHERE id_event = ?"
+	data, err := GeneralSelect(query, idEvent)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func DeleteCourse(idEvent int64) error {
+	// delete data from tbl_event, tbl_job, tbl_user_event
+	// delete tbl_event
+	query := "DELETE FROM tbl_event WHERE id=?"
+	_, err := helper.Db.Exec(query, idEvent)
+	if err != nil {
+		return err
+	}
+
+	// delete tbl_job
+	query = "DELETE FROM tbl_job WHERE id_event=?"
+	_, err = helper.Db.Exec(query, idEvent)
+	if err != nil {
+		return err
+	}
+
+	// delete tbl_user_event
+	query = "DELETE FROM tbl_user_event WHERE id_event=?"
+	_, err = helper.Db.Exec(query, idEvent)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

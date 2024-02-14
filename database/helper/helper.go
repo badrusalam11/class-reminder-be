@@ -90,18 +90,6 @@ func toString(value interface{}) (string, bool) {
 	}
 }
 
-func GetJobDay(day string) string {
-	jobMap := make(map[string]string)
-	jobMap["MON"] = "SUN"
-	jobMap["TUE"] = "MON"
-	jobMap["WED"] = "TUE"
-	jobMap["THU"] = "WED"
-	jobMap["FRI"] = "THU"
-	jobMap["SAT"] = "FRI"
-	jobMap["SUN"] = "SAT"
-	return jobMap[day]
-}
-
 // CloseDB closes the database connection
 // func CloseDB() {
 // 	if Db != nil {
