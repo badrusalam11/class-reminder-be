@@ -22,5 +22,9 @@
         "url":"https://wa.srv25.wapanels.com/send-message",
         "api_key":"fDY8lbERw3urkXWtlWRaP127UUhUJt",
         "sender":"087775974516"
+    },
+    "app":{
+        "base_url":"http://localhost:9090/",
+        "port":"9090"
     }
 }

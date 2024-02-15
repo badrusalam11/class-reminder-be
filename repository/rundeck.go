@@ -71,7 +71,7 @@ func CreateJobToRundeck(id int64, title string, schedule string, jobEvery string
 			"sequence": {
 				"commands": [
 					{
-						"script": "curl --location \"http://localhost:9090/notif/send\" ^ --header \"Content-Type: application/json\" ^ --data \"{ \\\"event_id\\\": %d }\""
+						"script": "curl --location \"%snotif/send\" ^ --header \"Content-Type: application/json\" ^ --data \"{ \\\"event_id\\\": %d }\""
 					}
 				]
 			},
@@ -89,7 +89,7 @@ func CreateJobToRundeck(id int64, title string, schedule string, jobEvery string
 			}
 		}
 	]
-	 `, uuid, jobName, id, hr, min, sec, jobEvery))
+	 `, uuid, jobName, config.AppBaseUrl, id, hr, min, sec, jobEvery))
 	fmt.Println("payload", string(payload))
 	// Create a new HTTP client
 	client := &http.Client{}

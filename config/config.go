@@ -19,6 +19,8 @@ var (
 	WhatsappURL        string
 	WhatsappApiKey     string
 	WhatsappSender     string
+	AppBaseUrl         string
+	AppPort            string
 )
 
 func GetString(key string) string {
@@ -48,4 +50,6 @@ func init() {
 	WhatsappURL = viper.GetString(`whatsapp.url`)
 	WhatsappApiKey = viper.GetString(`whatsapp.api_key`)
 	WhatsappSender = viper.GetString(`whatsapp.sender`)
+	AppBaseUrl = viper.GetString(`app.base_url`)
+	AppPort = viper.GetString(`app.port`)
 }

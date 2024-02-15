@@ -44,7 +44,7 @@ func main() {
 	// http.Handle(config.V1Route+"notif/register", middleware.CorsEnabled(http.HandlerFunc(notifHandler.Register)))
 	apiCaller(config.V1Route+"login", authHandler.Login)
 	apiCaller(config.V1Route+"notif/register", notifHandler.Register)
-	http.ListenAndServe(":9090", nil)
+	http.ListenAndServe(":"+config.AppPort, nil)
 }
 
 func apiCaller(route string, handler http.HandlerFunc) {
