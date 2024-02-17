@@ -8,7 +8,14 @@ import (
 
 func Register(registerData model.RegisterUserRequest) error {
 	// Update tbl_user_notif
-	err := database.RegisterStudent(registerData.Name, registerData.Nim, registerData.Phone, registerData.Major, registerData.Class)
+	err := database.RegisterStudent(
+		registerData.Name,
+		registerData.Nim,
+		registerData.Phone,
+		registerData.Major,
+		registerData.Class,
+		registerData.TuitionFee,
+		registerData.VaAccount)
 	if err != nil {
 		fmt.Println("error", err)
 		return err

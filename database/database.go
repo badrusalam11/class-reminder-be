@@ -282,7 +282,7 @@ func GetCourseById(id int64) (map[string]interface{}, error) {
 	return data, nil
 }
 
-func RegisterStudent(name string, nim string, no_hp string, major string, class []int) error {
+func RegisterStudent(name string, nim string, no_hp string, major string, class []int, tuition_fee int, va_account string) error {
 	//insert to tbl_user_student
 	query := "INSERT INTO tbl_user_student (username, name, nim, major) VALUES (?, ?, ?, ?)"
 	_, err := helper.Db.Exec(query, nim, name, nim, major)
@@ -307,10 +307,16 @@ func RegisterStudent(name string, nim string, no_hp string, major string, class 
 		return err
 	}
 
+	// insert to tbl_user_payment
+	query = "INSERT INTO tbl_user_payment (nim, bill, va_account, last_payment_date) VALUES (?, ?, ?, ?)"
+	_, err = helper.Db.Exec(query, nim, tuition_fee, va_account, library.CurrTimestamp())
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
-func EditStudent(name string, nim string, no_hp string, major string, class []int) error {
+func EditStudent(name string, nim string, no_hp string, major string, class []int, tuition_fee int, va_account string) error {
 	//update to tbl_user_student
 	query := "UPDATE tbl_user_student SET username=?, name=?, nim=?, major=? WHERE nim=?"
 	_, err := helper.Db.Exec(query, nim, name, nim, major, nim)
@@ -342,6 +348,13 @@ func EditStudent(name string, nim string, no_hp string, major string, class []in
 		return err
 	}
 
+	// insert to tbl_user_notif
+	query = "UPDATE tbl_user_payment SET bill=?, va_account=? WHERE nim=?"
+	_, err = helper.Db.Exec(query, tuition_fee, va_account, nim)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -362,6 +375,13 @@ func DeleteStudent(nim string) error {
 
 	// insert to tbl_user_notif
 	query = "DELETE FROM tbl_user_notif WHERE nim=?"
+	_, err = helper.Db.Exec(query, nim)
+	if err != nil {
+		return err
+	}
+
+	// delete to tbl_user_payment
+	query = "DELETE FROM tbl_user_payment WHERE nim=?"
 	_, err = helper.Db.Exec(query, nim)
 	if err != nil {
 		return err
@@ -390,13 +410,19 @@ func GetStudentInfo() ([]map[string]interface{}, error) {
 }
 
 func GetDetailStudentInfo(nim string) ([]map[string]interface{}, error) {
-	query := `SELECT us.nim, us.name, un.no_hp, us.major, ue.id_event as class_id, e.title AS class_title FROM tbl_user_student us 
-	JOIN tbl_user_notif un ON 
-	us.nim = un.nim
-	JOIN tbl_user_event ue ON
-	us.nim = ue.nim
-	JOIN tbl_event e ON
-	ue.id_event = e.id WHERE us.nim= ?`
+	query := `SELECT us.nim, us.name, un.no_hp, us.major, ue.id_event as class_id, e.title AS class_title,
+		up.bill, up.va_account
+	 FROM tbl_user_student us 
+		JOIN tbl_user_notif un ON 
+		us.nim = un.nim
+		JOIN tbl_user_event ue ON
+		us.nim = ue.nim
+		JOIN tbl_event e ON
+		ue.id_event = e.id 
+		JOIN tbl_user_payment up on
+		up.nim=us.nim
+		WHERE us.nim= ?
+		`
 	data, err := GeneralSelectRows(query, nim)
 	fmt.Println("data dari db", data)
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	courseHandler "class-reminder-be/handler/course"
 	eventHandler "class-reminder-be/handler/event"
 	notifHandler "class-reminder-be/handler/notif"
+	paymentReminderHandler "class-reminder-be/handler/paymentReminder"
 	userHandler "class-reminder-be/handler/user"
 	middleware "class-reminder-be/middleware"
 
@@ -42,6 +43,8 @@ func main() {
 	apiCallerWithSession(config.V1Route+"course/show", courseHandler.Show)
 	apiCallerWithSession(config.V1Route+"course/show/detail", courseHandler.Detail)
 	apiCallerWithSession(config.V1Route+"course/log/show", courseHandler.Log)
+
+	apiCallerWithSession(config.V1Route+"payment-reminder/show", paymentReminderHandler.Show)
 
 	// API route with CORS middleware
 	// http.Handle(config.V1Route+"login", middleware.CorsEnabled(http.HandlerFunc(authHandler.Login)))

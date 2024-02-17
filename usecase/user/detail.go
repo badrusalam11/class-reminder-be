@@ -27,6 +27,8 @@ func Detail(request model.DetailUserRequest) (*model.Result, error) {
 		major := string(item["major"].([]byte))
 		classID := int(item["class_id"].(int64))
 		classTitle := string(item["class_title"].([]byte))
+		va_account := string(item["va_account"].([]byte))
+		tuition_fee := int(item["bill"].(int64))
 		key := nim
 		// key := major + "_" + name + "_" + nim + "_" + noHP
 		if existingResult, exists := resultMap[key]; exists {
@@ -48,7 +50,9 @@ func Detail(request model.DetailUserRequest) (*model.Result, error) {
 					ID:    classID,
 					Title: classTitle,
 				}},
-				ClassArr: append(classArr, classID),
+				ClassArr:   append(classArr, classID),
+				TuitionFee: tuition_fee,
+				VaAccount:  va_account,
 			}
 			resultMap[key] = &newResult
 		}
