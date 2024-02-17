@@ -14,23 +14,34 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-func SendToWhatsapp(notifArr []string, data []map[string]interface{}, trxType string) error {
+func SendToWhatsapp(notifArr []string, data []map[string]interface{}, trxType string) (count int, err error) {
 	var message string
+	var mapData map[string]interface{}
+	count = 0
 	//get content from db
 	content, err := database.GetContentFromDB(trxType)
 	content_string := string(content["content"].([]uint8))
 	additional_data := string(content["additional_data"].([]uint8))
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return count, err
 	}
 	for i := 0; i < len(notifArr); i++ {
 		message, err = helper.MappingMessage(content_string, additional_data, data[i])
 		if err != nil {
-			return err
+			fmt.Println(err)
+			return count, err
 		}
-		whatsappApiCaller(message, string(notifArr[i]))
+		response, _ := whatsappApiCaller(message, string(notifArr[i]))
+
+		// Unmarshal the JSON string into the map
+		json.Unmarshal([]byte(response), &mapData)
+		fmt.Println("data", data)
+		if mapData["status"] == true {
+			count++
+		}
 	}
-	return nil
+	return count, nil
 }
 
 func BlastToWhatsapp(notifArr []map[string]interface{}, message string) (count int, err error) {

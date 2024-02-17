@@ -71,10 +71,13 @@ func Send(eventId int) (string, error) {
 
 	// call to whatsapp
 	// response, err := repository.SendToFirebase(notifArr)
-	err = repository.SendToWhatsapp(notifArr, userEvent, trxType)
+	count, err := repository.SendToWhatsapp(notifArr, userEvent, trxType)
 	if err != nil {
 		return "", err
 	}
+	fmt.Println("count user", count)
+	// insert to trx log
+	err = database.InsertToTrxLog(eventId, count, trxType)
 	response := "success"
 	return response, err
 }

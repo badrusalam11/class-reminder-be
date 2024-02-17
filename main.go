@@ -16,7 +16,10 @@ import (
 )
 
 func init() {
-	database.ConnectDB()
+	err := database.ConnectDB()
+	if err != nil {
+		panic(err)
+	}
 }
 
 func main() {
@@ -38,6 +41,7 @@ func main() {
 	apiCallerWithSession(config.V1Route+"course/delete", courseHandler.Delete)
 	apiCallerWithSession(config.V1Route+"course/show", courseHandler.Show)
 	apiCallerWithSession(config.V1Route+"course/show/detail", courseHandler.Detail)
+	apiCallerWithSession(config.V1Route+"course/log/show", courseHandler.Log)
 
 	// API route with CORS middleware
 	// http.Handle(config.V1Route+"login", middleware.CorsEnabled(http.HandlerFunc(authHandler.Login)))

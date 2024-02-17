@@ -4,9 +4,7 @@ import (
 	"class-reminder-be/config"
 	"class-reminder-be/library"
 	usecase "class-reminder-be/usecase/notif"
-	"fmt"
 	"net/http"
-	"time"
 )
 
 func BlastHistory(w http.ResponseWriter, r *http.Request) {
@@ -34,17 +32,7 @@ func BlastHistory(w http.ResponseWriter, r *http.Request) {
 		id := string(item["id"].([]uint8))
 		message := string(item["message"].([]uint8))
 		user_success := string(item["user_success"].([]uint8))
-
-		// Parse the input timestamp string
-		layout := "2006-01-02 15:04:05"
-		timestamp, err := time.Parse(layout, created_at)
-		if err != nil {
-			fmt.Println("Error parsing timestamp:", err)
-			return
-		}
-
-		// Format the timestamp as per the desired format
-		formattedTime := timestamp.Format("02/01/2006 15:04:05")
+		formattedTime := library.GetTrxDate(created_at)
 
 		// Create a map with string values
 		data := map[string]interface{}{

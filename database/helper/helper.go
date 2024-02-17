@@ -11,17 +11,18 @@ import (
 
 var Db *sql.DB
 
-func ConnectDB() {
+func ConnectDB() error {
 	fmt.Println("database init")
 	err := InitDB()
 	if err != nil {
 		fmt.Println("Error initializing the database:", err)
-		return
+		return err
 	}
 	// defer CloseDB()
 	fmt.Println(err)
 	fmt.Println("database", Db)
 	fmt.Println("database close")
+	return nil
 }
 
 func InitDB() error {

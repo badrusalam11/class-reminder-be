@@ -492,3 +492,26 @@ func DeleteCourse(idEvent int64) error {
 
 	return nil
 }
+
+func InsertToTrxLog(idEvent int, count int, trxType string) error {
+	//insert to tbl_job
+	query := "INSERT INTO tbl_trx_log (id_event, user_success, trx_type, trx_date) VALUES (?, ?, ?, ?)"
+	_, err := helper.Db.Exec(query, idEvent, count, trxType, library.CurrTimestamp())
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetTrxLog() ([]map[string]interface{}, error) {
+	query := "SELECT tl.*,e.title from tbl_trx_log tl JOIN tbl_event e ON e.id=tl.id_event WHERE trx_type='course' ORDER BY id DESC"
+	data, err := GeneralSelectRows(query)
+	if err != nil {
+		return nil, err
+	}
+
+	if data == nil {
+		return nil, nil // Handle the case where no data was found for the given idEvent.
+	}
+	return data, nil
+}

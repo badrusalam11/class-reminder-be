@@ -64,3 +64,16 @@ func GetDayFromPrefix(prefix string) string {
 	dayMap["SUN"] = "Sunday"
 	return dayMap[prefix]
 }
+
+func GetTrxDate(dateString string) string {
+	// Parse the input timestamp string
+	layout := "2006-01-02 15:04:05"
+	timestamp, err := time.Parse(layout, dateString)
+	if err != nil {
+		return ""
+	}
+
+	// Format the timestamp as per the desired format
+	formattedTime := timestamp.Format("02/01/2006 15:04:05")
+	return formattedTime
+}

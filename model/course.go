@@ -26,3 +26,11 @@ type CourseShowResponse struct {
 	CourseDayPrefix string `json:"course_day_prefix" validate:"required"`
 	ReminderDay     string `json:"reminder_day" validate:"required"`
 }
+
+type CourseLogResponse struct {
+	Id          int    `json:"id" validate:"required"`
+	Title       string `json:"title" validate:"required"`
+	UserSuccess string `json:"user_success" validate:"required"`
+	TrxType     string `json:"trx_type" validate:"required"`
+	TrxDate     string `json:"trx_date" validate:"required"`
+}
