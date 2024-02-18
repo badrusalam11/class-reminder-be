@@ -5,6 +5,7 @@ import (
 	database "class-reminder-be/database/helper"
 	authHandler "class-reminder-be/handler/auth"
 	courseHandler "class-reminder-be/handler/course"
+	dashboardHandler "class-reminder-be/handler/dashboard"
 	eventHandler "class-reminder-be/handler/event"
 	notifHandler "class-reminder-be/handler/notif"
 	paymentReminderHandler "class-reminder-be/handler/paymentReminder"
@@ -49,6 +50,8 @@ func main() {
 	apiCallerWithSession(config.V1Route+"payment-reminder/show", paymentReminderHandler.Show)
 	apiCallerWithSession(config.V1Route+"payment-reminder/job/detail", paymentReminderHandler.JobDetail)
 	apiCallerWithSession(config.V1Route+"payment-reminder/job/trigger", paymentReminderHandler.JobTrigger)
+
+	apiCallerWithSession(config.V1Route+"dashboard/show", dashboardHandler.Show)
 
 	// API route with CORS middleware
 	// http.Handle(config.V1Route+"login", middleware.CorsEnabled(http.HandlerFunc(authHandler.Login)))

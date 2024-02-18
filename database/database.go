@@ -589,6 +589,23 @@ func GetUserPaymentByNim(nim string) (map[string]interface{}, error) {
 	return data, nil
 }
 
+func GetTransactionInfo() ([]map[string]interface{}, error) {
+	query := `SELECT et.name AS title, COUNT(*) as total, CONCAT(COUNT(*), ' hit/year')total_str FROM tbl_trx_log tl 
+	JOIN tbl_event_type et
+	ON et.trx_type = tl.trx_type
+	WHERE YEAR(trx_date) = YEAR(CURDATE())
+	GROUP BY tl.trx_type`
+	data, err := GeneralSelectRows(query)
+	if err != nil {
+		return nil, err
+	}
+
+	if data == nil {
+		return nil, nil // Handle the case where no data was found for the given idEvent.
+	}
+	return data, nil
+}
+
 func JobDetail() (map[string]interface{}, error) {
 	query := `SELECT e.*,j.job_name,j.job_id FROM tbl_event e JOIN tbl_job j ON e.id=j.id_event WHERE id_event_type=3`
 	data, err := GeneralSelect(query)
