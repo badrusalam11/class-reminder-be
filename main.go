@@ -24,9 +24,11 @@ func init() {
 }
 
 func main() {
-	http.HandleFunc("/notif/send", notifHandler.Send) // may hit by rundeck
+	// http.HandleFunc("/notif/send", notifHandler.Send) // may hit by rundeck
 	// http.HandleFunc("/event/create", eventHandler.Create)
+	apiCaller("/notif/send", notifHandler.Send) // may hit by rundeck
 	apiCallerWithSession(config.V1Route+"event/create", eventHandler.Create)
+	apiCallerWithSession(config.V1Route+"event/edit", eventHandler.Edit)
 	apiCallerWithSession(config.V1Route+"notif/blast", notifHandler.Blast)
 	apiCallerWithSession(config.V1Route+"notif/blast/history", notifHandler.BlastHistory)
 
@@ -45,6 +47,8 @@ func main() {
 	apiCallerWithSession(config.V1Route+"course/log/show", courseHandler.Log)
 
 	apiCallerWithSession(config.V1Route+"payment-reminder/show", paymentReminderHandler.Show)
+	apiCallerWithSession(config.V1Route+"payment-reminder/job/detail", paymentReminderHandler.JobDetail)
+	apiCallerWithSession(config.V1Route+"payment-reminder/job/trigger", paymentReminderHandler.JobTrigger)
 
 	// API route with CORS middleware
 	// http.Handle(config.V1Route+"login", middleware.CorsEnabled(http.HandlerFunc(authHandler.Login)))

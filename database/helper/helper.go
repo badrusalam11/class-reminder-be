@@ -63,7 +63,8 @@ func MappingMessage(content string, additionalDataJSON string, data map[string]i
 		placeholder := "$" + key
 
 		// Convert the interface{} value to a string
-		strValue := string(data[key].([]uint8))
+		strValue, _ := toString(data[key])
+		// strValue := string(data[key].([]uint8))
 
 		content = strings.ReplaceAll(content, placeholder, strValue)
 	}
@@ -85,9 +86,11 @@ func toString(value interface{}) (string, bool) {
 			return v.Time.Format(time.RFC3339), true // Format time as a string if it is valid
 		}
 		return "", false
+	case int64:
+		return fmt.Sprint(v), true // Convert int64 to string using fmt.Sprint
 	default:
 		// Handle unknown types
-		return fmt.Sprintf("%v", v), true
+		return string(v.([]uint8)), true
 	}
 }
 

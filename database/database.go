@@ -185,6 +185,15 @@ func InsertEventToDB(data model.EventCreateRequest, jobEvery string) (int64, err
 	return lastInsertID, nil
 }
 
+func EditEventToDB(data model.EventEditRequest, jobEvery string) error {
+	query := "UPDATE tbl_event SET title=?, description=?, schedule=?, job_every=?, id_event_type=? WHERE id=?"
+	_, err := helper.Db.Exec(query, data.Title, data.Description, data.Schedule, data.JobEvery, data.IdEventType, data.Id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 func GetUserFromDB(username string) (map[string]interface{}, error) {
 	query := "SELECT * FROM tbl_user WHERE username = ?"
 	result, err := GeneralSelect(query, username)
@@ -532,6 +541,57 @@ func InsertToTrxLog(idEvent int, count int, trxType string) error {
 func GetTrxLog() ([]map[string]interface{}, error) {
 	query := "SELECT tl.*,e.title from tbl_trx_log tl JOIN tbl_event e ON e.id=tl.id_event WHERE trx_type='course' ORDER BY id DESC"
 	data, err := GeneralSelectRows(query)
+	if err != nil {
+		return nil, err
+	}
+
+	if data == nil {
+		return nil, nil // Handle the case where no data was found for the given idEvent.
+	}
+	return data, nil
+}
+
+func GetUserPayment() ([]map[string]interface{}, error) {
+	query := `SELECT up.id, us.name, up.nim, up.bill, up.va_account, no_hp,
+	DATE_FORMAT(up.last_payment_date, '%d/%m/%Y') AS last_payment_date,
+	DATE_FORMAT(LAST_DAY(CURDATE()), '%d/%m/%Y') AS due_date
+			FROM tbl_user_payment up
+			JOIN tbl_user_student us ON up.nim=us.nim 
+			JOIN tbl_user_notif un ON up.nim=un.nim
+			WHERE MONTH(last_payment_date) < MONTH(CURDATE())`
+	data, err := GeneralSelectRows(query)
+	if err != nil {
+		return nil, err
+	}
+
+	if data == nil {
+		return nil, nil // Handle the case where no data was found for the given idEvent.
+	}
+	return data, nil
+}
+
+func GetUserPaymentByNim(nim string) (map[string]interface{}, error) {
+	query := `SELECT up.id, us.name, up.nim, up.bill, up.va_account, no_hp,
+	DATE_FORMAT(up.last_payment_date, '%d/%m/%Y') AS last_payment_date,
+	DATE_FORMAT(LAST_DAY(CURDATE()), '%d/%m/%Y') AS due_date
+			FROM tbl_user_payment up
+			JOIN tbl_user_student us ON up.nim=us.nim 
+			JOIN tbl_user_notif un ON up.nim=un.nim
+			WHERE MONTH(last_payment_date) < MONTH(CURDATE()) AND us.nim=?`
+	data, err := GeneralSelect(query, nim)
+	if err != nil {
+		return nil, err
+	}
+
+	if data == nil {
+		return nil, nil // Handle the case where no data was found for the given idEvent.
+	}
+	return data, nil
+}
+
+func JobDetail() (map[string]interface{}, error) {
+	query := `SELECT e.*,j.job_name,j.job_id FROM tbl_event e JOIN tbl_job j ON e.id=j.id_event WHERE id_event_type=3`
+	data, err := GeneralSelect(query)
 	if err != nil {
 		return nil, err
 	}

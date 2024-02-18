@@ -40,6 +40,7 @@ type Response struct {
 func CreateJobToRundeck(id int64, title string, schedule string, jobEvery string, optionalParams ...string) (jobId string, err error) {
 	uuid := ""
 	dupeOption := ""
+	dayOfMonth := ""
 
 	// Set optional parameters if provided
 	if len(optionalParams) > 0 {
@@ -47,6 +48,9 @@ func CreateJobToRundeck(id int64, title string, schedule string, jobEvery string
 	}
 	if len(optionalParams) > 1 {
 		dupeOption = optionalParams[1]
+	}
+	if len(optionalParams) > 2 {
+		dayOfMonth = optionalParams[2]
 	}
 
 	jobName := generateJobName(id, title)
@@ -85,11 +89,14 @@ func CreateJobToRundeck(id int64, title string, schedule string, jobEvery string
 				"year": "*",
 				"weekday": {
 					"day": "%s"
+				},
+				"dayofmonth": {
+					"day": "%s"
 				}
 			}
 		}
 	]
-	 `, uuid, jobName, config.AppBaseUrl, id, hr, min, sec, jobEvery))
+	 `, uuid, jobName, config.AppBaseUrl, id, hr, min, sec, jobEvery, dayOfMonth))
 	fmt.Println("payload", string(payload))
 	// Create a new HTTP client
 	client := &http.Client{}

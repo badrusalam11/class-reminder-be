@@ -12,13 +12,13 @@ func Send(eventId int) (string, error) {
 	// check id_event in tbl_event_type if is_specific user or not
 	event, err := database.GetEventFromDB(eventId)
 	if err != nil {
-		fmt.Print("send", err)
+		fmt.Print("event", err)
 	}
 	trxTypeDB, err := database.GetTrxTypeFromDB(eventId)
 	trxTypeuint := trxTypeDB["trx_type"].([]uint8)
 	trxType := string(trxTypeuint)
 	if err != nil {
-		fmt.Print("send", err)
+		fmt.Print("trxtype", err)
 	}
 	is_specific := event["is_specific_user"].(int64)
 	var notifArr []string
@@ -33,6 +33,7 @@ func Send(eventId int) (string, error) {
 			return "failed", err
 		}
 		// fmt.Println(userEvent[0]["notif_id"])
+		//LOOPING TO GET NOMOR HP
 		for i := 0; i < len(userEvent); i++ {
 			// Assuming userEvent["notif_id"] is a byte slice ([]uint8)
 			notifIDsBytes := userEvent[i]["no_hp"].([]uint8)
@@ -50,7 +51,13 @@ func Send(eventId int) (string, error) {
 		// else, blast to all user in tbl_user_notif
 	} else {
 		fmt.Println("masuk else")
-		userEvent, err = database.GetUserNotifFromDB()
+		if trxType == "TuitionFee" {
+			fmt.Println("tuitionfee")
+			// kalau reminder payment, cari user yang belum bayar UKT
+			userEvent, err = database.GetUserPayment()
+		} else {
+			userEvent, err = database.GetUserNotifFromDB()
+		}
 		if err != nil {
 			fmt.Print("send", err)
 			return "failed", err
@@ -71,8 +78,12 @@ func Send(eventId int) (string, error) {
 
 	// call to whatsapp
 	// response, err := repository.SendToFirebase(notifArr)
+	fmt.Println(notifArr)
+	fmt.Println(userEvent)
+	fmt.Println(trxType)
 	count, err := repository.SendToWhatsapp(notifArr, userEvent, trxType)
 	if err != nil {
+		fmt.Println("whatsapp error")
 		return "", err
 	}
 	fmt.Println("count user", count)

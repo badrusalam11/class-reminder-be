@@ -3,7 +3,7 @@ package paymentReminderHandler
 import (
 	"class-reminder-be/config"
 	"class-reminder-be/library"
-	usecase "class-reminder-be/usecase/course"
+	usecase "class-reminder-be/usecase/paymentReminder"
 	"net/http"
 )
 
