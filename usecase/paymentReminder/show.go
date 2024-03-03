@@ -2,6 +2,7 @@ package paymentReminderuc
 
 import (
 	"class-reminder-be/database"
+	"class-reminder-be/database/helper"
 	"class-reminder-be/model"
 	"fmt"
 	"strconv"
@@ -24,6 +25,7 @@ func Show() ([]model.PaymentReminderResponse, error) {
 		nim := string(item["nim"].([]uint8))
 		bill := string(item["bill"].([]uint8))
 		tuition_fee, _ := strconv.Atoi(bill)
+		tuition_fee_str, _ := helper.FormatIDR(bill)
 		va_account := string(item["va_account"].([]uint8))
 		last_payment_date := string(item["last_payment_date"].([]uint8))
 		due_date := string(item["due_date"].([]uint8))
@@ -34,6 +36,7 @@ func Show() ([]model.PaymentReminderResponse, error) {
 			Name:            name,
 			Nim:             nim,
 			TuitionFee:      tuition_fee,
+			TuitionFeeStr:   tuition_fee_str,
 			VaAccount:       va_account,
 			LastPaymentDate: last_payment_date,
 			DueDate:         due_date,

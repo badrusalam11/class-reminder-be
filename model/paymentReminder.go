@@ -5,6 +5,7 @@ type PaymentReminderResponse struct {
 	Name            string `json:"name" validate:"required"`
 	Nim             string `json:"nim" validate:"required"`
 	TuitionFee      int    `json:"tuition_fee" validate:"required"`
+	TuitionFeeStr   string `json:"tuition_fee_str" validate:"required"`
 	VaAccount       string `json:"va_account" validate:"required"`
 	LastPaymentDate string `json:"last_payment_date" validate:"required"`
 	DueDate         string `json:"due_date" validate:"required"`

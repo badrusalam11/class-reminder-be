@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -64,6 +65,9 @@ func MappingMessage(content string, additionalDataJSON string, data map[string]i
 
 		// Convert the interface{} value to a string
 		strValue, _ := toString(data[key])
+		if key == "bill" {
+			strValue, _ = FormatIDR(strValue)
+		}
 		// strValue := string(data[key].([]uint8))
 
 		content = strings.ReplaceAll(content, placeholder, strValue)
@@ -92,6 +96,43 @@ func toString(value interface{}) (string, bool) {
 		// Handle unknown types
 		return string(v.([]uint8)), true
 	}
+}
+
+// FormatIDR formats a string representing an amount as Indonesian Rupiah.
+func FormatIDR(amountStr string) (string, error) {
+	// Convert string to float64
+	amount, err := strconv.ParseFloat(amountStr, 64)
+	if err != nil {
+		return "", fmt.Errorf("error converting string to float64: %v", err)
+	}
+
+	// Format as IDR with thousands separator
+	formatted := "Rp" + formatWithThousandsSeparator(amount)
+
+	return formatted, nil
+}
+
+// formatWithThousandsSeparator formats a float64 with thousands separator.
+func formatWithThousandsSeparator(amount float64) string {
+	amountStr := strconv.FormatFloat(amount, 'f', 0, 64)
+	length := len(amountStr)
+
+	if length <= 3 {
+		return amountStr
+	}
+
+	separatorIndex := length % 3
+	if separatorIndex == 0 {
+		separatorIndex = 3
+	}
+
+	result := amountStr[:separatorIndex]
+
+	for i := separatorIndex; i < length; i += 3 {
+		result += "." + amountStr[i:i+3]
+	}
+
+	return result
 }
 
 // CloseDB closes the database connection
