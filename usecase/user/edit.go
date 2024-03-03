@@ -15,7 +15,9 @@ func Edit(registerData model.EditUserRequest) error {
 		registerData.Major,
 		registerData.Class,
 		registerData.TuitionFee,
-		registerData.VaAccount)
+		registerData.VaAccount,
+		registerData.LastPaymentDate,
+	)
 	if err != nil {
 		fmt.Println("error", err)
 		return err

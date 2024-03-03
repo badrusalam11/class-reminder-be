@@ -15,7 +15,9 @@ func Register(registerData model.RegisterUserRequest) error {
 		registerData.Major,
 		registerData.Class,
 		registerData.TuitionFee,
-		registerData.VaAccount)
+		registerData.VaAccount,
+		registerData.LastPaymentDate,
+	)
 	if err != nil {
 		fmt.Println("error", err)
 		return err

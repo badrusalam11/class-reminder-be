@@ -2,6 +2,7 @@ package useruc
 
 import (
 	"class-reminder-be/database"
+	"class-reminder-be/library"
 	"class-reminder-be/model"
 	"fmt"
 )
@@ -29,6 +30,8 @@ func Detail(request model.DetailUserRequest) (*model.Result, error) {
 		classTitle := string(item["class_title"].([]byte))
 		va_account := string(item["va_account"].([]byte))
 		tuition_fee := int(item["bill"].(int64))
+		last_payment_date := library.GetDateYMD(string(item["last_payment_date"].([]uint8)))
+
 		key := nim
 		// key := major + "_" + name + "_" + nim + "_" + noHP
 		if existingResult, exists := resultMap[key]; exists {
@@ -50,9 +53,10 @@ func Detail(request model.DetailUserRequest) (*model.Result, error) {
 					ID:    classID,
 					Title: classTitle,
 				}},
-				ClassArr:   append(classArr, classID),
-				TuitionFee: tuition_fee,
-				VaAccount:  va_account,
+				ClassArr:        append(classArr, classID),
+				TuitionFee:      tuition_fee,
+				VaAccount:       va_account,
+				LastPaymentDate: last_payment_date,
 			}
 			resultMap[key] = &newResult
 		}
