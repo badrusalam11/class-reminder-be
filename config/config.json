@@ -19,9 +19,11 @@
         "timeout": 20
     },
     "whatsapp":{
-        "url":"https://wa.srv25.wapanels.com/send-message",
+        "url":"https://app.wapanels.com/api/create-message",
+        "app_key":"94eb0368-1d77-4bda-9c7b-02eece51725e",
+        "auth_key":"LW0ZJuYbpOZzKQ8riHbvSOTJBuXla2qdQlzC4duLq5JH3qyqQs",
         "api_key":"fDY8lbERw3urkXWtlWRaP127UUhUJt",
-        "sender":"087775974516"
+        "sender":"087871855339"
     },
     "app":{
         "base_url":"http://localhost:9090/",

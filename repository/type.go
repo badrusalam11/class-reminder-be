@@ -13,6 +13,14 @@ type WhatsappRequest struct {
 	Message string `json:"message"`
 }
 
+type WhatsappNewRequest struct {
+	AppKey  string `json:"appkey"`
+	Authkey string `json:"authkey"`
+	To      string `json:"to"`
+	Message string `json:"message"`
+	Sandbox string `json:"sandbox"`
+}
+
 type FirebaseNotification struct {
 	Body     string `json:"body"`
 	Title    string `json:"title"`

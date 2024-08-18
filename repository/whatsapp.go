@@ -37,7 +37,7 @@ func SendToWhatsapp(notifArr []string, data []map[string]interface{}, trxType st
 		// Unmarshal the JSON string into the map
 		json.Unmarshal([]byte(response), &mapData)
 		fmt.Println("data", data)
-		if mapData["status"] == true {
+		if mapData["message_status"] == "Success" {
 			count++
 		}
 	}
@@ -52,7 +52,7 @@ func BlastToWhatsapp(notifArr []map[string]interface{}, message string) (count i
 		// Unmarshal the JSON string into the map
 		json.Unmarshal([]byte(response), &data)
 		fmt.Println(data)
-		if data["status"] == true {
+		if data["message_status"] == "Success" {
 			count++
 		}
 	}
@@ -60,10 +60,11 @@ func BlastToWhatsapp(notifArr []map[string]interface{}, message string) (count i
 }
 
 func whatsappApiCaller(message string, no_hp string) (response string, err error) {
-	var request WhatsappRequest
-	request.ApiKey = config.WhatsappApiKey
-	request.Sender = config.WhatsappSender
-	request.Number = no_hp
+	var request WhatsappNewRequest
+	request.AppKey = config.WhatsappAppKey
+	request.Authkey = config.WhatsappAuthKey
+	request.To = no_hp
+	request.Sandbox = "false"
 	request.Message = message
 	reqBody, _ := jsoniter.Marshal(request)
 	fmt.Println(request)
@@ -102,5 +103,6 @@ func whatsappApiCaller(message string, no_hp string) (response string, err error
 			return "", err
 		}
 	}
+	fmt.Println("response", string(responseBody))
 	return string(responseBody), nil
 }

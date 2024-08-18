@@ -18,6 +18,8 @@ var (
 	RundeckTimeout     int
 	WhatsappURL        string
 	WhatsappApiKey     string
+	WhatsappAppKey     string
+	WhatsappAuthKey    string
 	WhatsappSender     string
 	AppBaseUrl         string
 	AppPort            string
@@ -49,6 +51,8 @@ func init() {
 	RundeckTimeout = viper.GetInt(`rundeck.project_name`)
 	WhatsappURL = viper.GetString(`whatsapp.url`)
 	WhatsappApiKey = viper.GetString(`whatsapp.api_key`)
+	WhatsappAppKey = viper.GetString(`whatsapp.app_key`)
+	WhatsappAuthKey = viper.GetString(`whatsapp.auth_key`)
 	WhatsappSender = viper.GetString(`whatsapp.sender`)
 	AppBaseUrl = viper.GetString(`app.base_url`)
 	AppPort = viper.GetString(`app.port`)
