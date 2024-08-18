@@ -1,6 +1,11 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"path/filepath"
+	"runtime"
+
+	"github.com/spf13/viper"
+)
 
 var (
 	DBHost             string
@@ -24,13 +29,17 @@ var (
 	AppBaseUrl         string
 	AppPort            string
 )
+var (
+	_, b, _, _ = runtime.Caller(0)
+	basepath   = filepath.Dir(b)
+)
 
 func GetString(key string) string {
 	return viper.GetString(key)
 }
 
 func init() {
-	viper.SetConfigFile(`config.json`)
+	viper.SetConfigFile(basepath + "/../" + `config.json`)
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(err)
