@@ -30,7 +30,7 @@ func GetString(key string) string {
 }
 
 func init() {
-	viper.SetConfigFile(`config/config.json`)
+	viper.SetConfigFile(`config.json`)
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(err)
