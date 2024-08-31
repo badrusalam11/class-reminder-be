@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func Send(w http.ResponseWriter, r *http.Request) {
+func Blast(w http.ResponseWriter, r *http.Request) {
 	// Check if the request method is POST
 	if r.Method != http.MethodGet {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -16,7 +16,7 @@ func Send(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// do business logic
-	err := usecase.Send()
+	err := usecase.Blast()
 	// empty data
 	data := map[string]interface{}{}
 	if err != nil {

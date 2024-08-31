@@ -25,14 +25,21 @@ func Show() ([]model.GraduationShowResponse, error) {
 		nim := string(item["nim"].([]uint8))
 		major := string(item["major"].([]uint8))
 		is_registered := string(item["is_registered"].([]uint8))
+		is_registered_string := "No"
+		is_registered_bool := false
+		if is_registered == "1" {
+			is_registered_string = "Yes"
+			is_registered_bool = true
+		}
 
 		// Create a map with string values
 		data := model.GraduationShowResponse{
-			Id:            id64,
-			Name:          name,
-			Nim:           nim,
-			Major:         major,
-			Is_registered: is_registered,
+			Id:                   id64,
+			Name:                 name,
+			Nim:                  nim,
+			Major:                major,
+			Is_registered:        is_registered_bool,
+			Is_registered_string: is_registered_string,
 		}
 		jsonData = append(jsonData, data)
 	}
