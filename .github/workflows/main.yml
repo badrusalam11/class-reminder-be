@@ -43,7 +43,12 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.22.2'  # Set your Go version here
-
+    - name: Add SSH Host Key
+      env:
+        SERVER_IP: ${{ vars.SERVER_IP }}
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
     - name: Decode and Save Private Key
       env:
         PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
