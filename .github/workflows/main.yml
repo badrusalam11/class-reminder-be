@@ -43,12 +43,14 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.22.2'  # Set your Go version here
+
     - name: Add SSH Host Key
       env:
         SERVER_IP: ${{ vars.SERVER_IP }}
       run: |
         mkdir -p ~/.ssh
         ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+
     - name: Decode and Save Private Key
       env:
         PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
@@ -64,6 +66,7 @@ jobs:
         SERVER_USER: ${{ vars.SERVER_USER }}
         SERVER_IP: ${{ vars.SERVER_IP }}
         SERVER_DIR: ${{ vars.SERVER_DIR }}
+        APP_NAME: ${{vars.APP_NAME}}
       run: |
-        scp -i ~/.ssh/private-key.pem -o StrictHostKeyChecking=no ./your_app_name ${{ env.SERVER_USER }}@${{ env.SERVER_IP }}:${{ env.SERVER_DIR }}
+        scp -i ~/.ssh/private-key.pem -o StrictHostKeyChecking=no ./{{env.APP_NAME}} ${{ env.SERVER_USER }}@${{ env.SERVER_IP }}:${{ env.SERVER_DIR }}/{{env.APP_NAME}}
         ssh -i ~/.ssh/private-key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_IP }} "sudo systemctl restart class-reminder-be"
