@@ -19,6 +19,7 @@ import (
 )
 
 func init() {
+	config.Init()
 	err := database.ConnectDB()
 	if err != nil {
 		panic(err)

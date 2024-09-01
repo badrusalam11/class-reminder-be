@@ -1,9 +1,6 @@
 package config
 
 import (
-	"path/filepath"
-	"runtime"
-
 	"github.com/spf13/viper"
 )
 
@@ -29,17 +26,13 @@ var (
 	AppBaseUrl         string
 	AppPort            string
 )
-var (
-	_, b, _, _ = runtime.Caller(0)
-	basepath   = filepath.Dir(b)
-)
 
 func GetString(key string) string {
 	return viper.GetString(key)
 }
 
-func init() {
-	viper.SetConfigFile(basepath + "/../" + `config.json`)
+func Init() {
+	viper.SetConfigFile(`config.json`)
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(err)
