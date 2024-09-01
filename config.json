@@ -1,7 +1,7 @@
 {
     "database":{
-        "username" : "root",
-        "password" : "",
+        "username" : "admin",
+        "password" : "P@ssword",
         "host" :"localhost",
         "port" : "3306",
         "dbName" : "db_class_reminder"
