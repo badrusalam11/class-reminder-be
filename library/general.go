@@ -90,3 +90,15 @@ func GetDateYMD(dateString string) string {
 	formattedTime := timestamp.Format("2006-01-02")
 	return formattedTime
 }
+
+func GetLastMonth() time.Time {
+	now := time.Now()
+	currentYear, currentMonth, _ := now.Date()
+
+	// Get the first day of the next month
+	firstDayOfNextMonth := time.Date(currentYear, currentMonth+1, 1, 0, 0, 0, 0, now.Location())
+
+	// Subtract one day to get the last day of the current month
+	lastDayOfCurrentMonth := firstDayOfNextMonth.AddDate(0, 0, -1)
+	return lastDayOfCurrentMonth
+}

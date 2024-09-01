@@ -54,6 +54,7 @@ func main() {
 
 	apiCallerWithSession(config.V1Route+"graduation/show", graduationHandler.Show)
 	apiCaller(config.V1Route+"graduation/blast", graduationHandler.Blast)
+	apiCallerWithSession(config.V1Route+"graduation/send", graduationHandler.Send)
 
 	apiCallerWithSession(config.V1Route+"dashboard/show", dashboardHandler.Show)
 	// API route with CORS middleware

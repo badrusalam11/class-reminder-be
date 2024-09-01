@@ -44,6 +44,36 @@ func SendToWhatsapp(notifArr []string, data []map[string]interface{}, trxType st
 	return count, nil
 }
 
+func SendToWhatsappSpecific(notifArr string, data map[string]interface{}, trxType string) (count int, err error) {
+	var message string
+	var mapData map[string]interface{}
+	count = 0
+	//get content from db
+	content, err := database.GetContentFromDB(trxType)
+	content_string := string(content["content"].([]uint8))
+	additional_data := string(content["additional_data"].([]uint8))
+	if err != nil {
+		fmt.Println(err)
+		return count, err
+	}
+
+	message, err = helper.MappingMessage(content_string, additional_data, data)
+	if err != nil {
+		fmt.Println(err)
+		return count, err
+	}
+	response, _ := whatsappApiCaller(message, string(notifArr))
+	fmt.Println(response)
+	// Unmarshal the JSON string into the map
+	json.Unmarshal([]byte(response), &mapData)
+	fmt.Println("data", data)
+	if mapData["message_status"] == "Success" {
+		count++
+	}
+
+	return count, nil
+}
+
 func BlastToWhatsapp(notifArr []map[string]interface{}, message string) (count int, err error) {
 	var data map[string]interface{}
 	for i := 0; i < len(notifArr); i++ {

@@ -650,3 +650,20 @@ func GetNotRegisGraduation() ([]map[string]interface{}, error) {
 	}
 	return data, nil
 }
+
+func GetUserGraduation(nim string) (map[string]interface{}, error) {
+	query := `
+	SELECT us.name, us.major, un.no_hp FROM tbl_graduation g JOIN tbl_user_student us ON g.nim=us.nim 
+	JOIN tbl_user_notif un ON g.nim=un.nim
+	WHERE g.nim=?
+	`
+	data, err := GeneralSelect(query, nim)
+	if err != nil {
+		return nil, err
+	}
+
+	if data == nil {
+		return nil, nil // Handle the case where no data was found for the given idEvent.
+	}
+	return data, nil
+}
