@@ -48,7 +48,7 @@ jobs:
       env:
         PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
       run: |
-        echo "${PRIVATE_KEY}" | base64 -d > ~/.ssh/private-key.pem
+        echo "${{PRIVATE_KEY}}" | base64 -d > ~/.ssh/private-key.pem
         chmod 600 ~/.ssh/private-key.pem
 
     - name: Build the application
@@ -56,9 +56,9 @@ jobs:
 
     - name: Deploy to server
       env:
-        SERVER_USER: ${{ secrets.SERVER_USER }}
-        SERVER_IP: ${{ secrets.SERVER_IP }}
-        SERVER_DIR: ${{ secrets.SERVER_DIR }}
+        SERVER_USER: ${{ vars.SERVER_USER }}
+        SERVER_IP: ${{ vars.SERVER_IP }}
+        SERVER_DIR: ${{ vars.SERVER_DIR }}
       run: |
         scp -i ~/.ssh/private-key.pem -o StrictHostKeyChecking=no ./your_app_name ${{ env.SERVER_USER }}@${{ env.SERVER_IP }}:${{ env.SERVER_DIR }}
         ssh -i ~/.ssh/private-key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_IP }} "sudo systemctl restart class-reminder-be"
