@@ -9,36 +9,39 @@ import (
 )
 
 func Blast() error {
-	// select data from tbl_user_notif
-	data, err := database.GetNotRegisGraduation()
+	// Select data from tbl_user_notif
+	data, err := database.GetUserThesis()
 	if err != nil {
 		return err
 	}
 
 	var notifArr []string
-	date := library.GetLastMonth() // Corrected: Call the function to get time.Time
-	// Convert time.Time to string in the desired format
-	dateString := date.Format("02 January 2006")
-	// Convert string to []uint8
-	dateBytes := []uint8(dateString)
-	for i := 0; i < len(data); i++ {
-		// Assuming userEvent["notif_id"] is a byte slice ([]uint8)
-		notifIDsBytes := data[i]["no_hp"].([]uint8)
-		data[i]["date"] = dateBytes // Assign marshaled date to data
-		// Convert []uint8 to string
-		notifIDsString := string(notifIDsBytes)
-		fmt.Println(notifIDsString)
+	userNotAttend := make([]map[string]interface{}, 0)
 
-		// Now you can split the string into a slice
-		notifIDs := strings.Split(notifIDsString, ",")
+	for i := 0; i < len(data); i++ {
+		lastAttendanceDate := data[i]["last_attendance_date"].([]uint8)
+		isAttendThisWeek, _ := library.IsDateInCurrentWeek(string(lastAttendanceDate))
+		if isAttendThisWeek {
+			continue
+		}
+
+		// Assuming "no_hp" contains the phone numbers in a byte slice ([]uint8)
+		noHPBytes := data[i]["no_hp"].([]uint8)
+		noHPString := string(noHPBytes)
+
+		// Split the string into a slice of notification IDs
+		notifIDs := strings.Split(noHPString, ",")
 		notifArr = append(notifArr, notifIDs...)
+
+		// Append the current user's data to the userNotAttend slice
+		userNotAttend = append(userNotAttend, data[i])
 	}
 
-	fmt.Println(data)
+	fmt.Println(userNotAttend)
 
 	// Blast to WhatsApp
-	trxType := "Graduation"
-	_, err = repository.SendToWhatsapp(notifArr, data, trxType)
+	trxType := "Thesis"
+	_, err = repository.SendToWhatsapp(notifArr, userNotAttend, trxType)
 	if err != nil {
 		return err
 	}

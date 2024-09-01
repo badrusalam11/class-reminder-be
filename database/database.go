@@ -679,3 +679,16 @@ func GetThesis() ([]map[string]interface{}, error) {
 	}
 	return data, nil
 }
+
+func GetUserThesis() ([]map[string]interface{}, error) {
+	query := `SELECT t.*,us.name,un.no_hp   FROM tbl_thesis t JOIN tbl_user_student us on us.nim=t.nim
+	JOIN tbl_user_notif un ON t.nim=un.nim`
+	data, err := GeneralSelectRows(query)
+	if err != nil {
+		return nil, err
+	}
+	if data == nil {
+		return nil, nil
+	}
+	return data, nil
+}

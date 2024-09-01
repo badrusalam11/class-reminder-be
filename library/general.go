@@ -102,3 +102,23 @@ func GetLastMonth() time.Time {
 	lastDayOfCurrentMonth := firstDayOfNextMonth.AddDate(0, 0, -1)
 	return lastDayOfCurrentMonth
 }
+
+// isDateInCurrentWeek checks if the given date is within the current week.
+func IsDateInCurrentWeek(dateStr string) (bool, error) {
+	// Define the layout of the input date string
+	layout := "2006-01-02 15:04:05"
+	// Parse the string into a time.Time object
+	date, err := time.Parse(layout, dateStr)
+	if err != nil {
+		return false, err
+	}
+	// Get the current date and time
+	now := time.Now()
+	// Calculate the start of the week (Monday)
+	startOfWeek := now.AddDate(0, 0, -int(now.Weekday())+1) // Adjust to start on Monday
+	// Calculate the end of the week (Sunday)
+	endOfWeek := startOfWeek.AddDate(0, 0, 6)
+	// Check if the given date is within the start and end of the week
+	isInWeek := date.After(startOfWeek) && date.Before(endOfWeek) || date.Equal(startOfWeek) || date.Equal(endOfWeek)
+	return isInWeek, nil
+}

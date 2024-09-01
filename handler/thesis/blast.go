@@ -3,7 +3,7 @@ package thesisHandler
 import (
 	"class-reminder-be/config"
 	"class-reminder-be/library"
-	usecase "class-reminder-be/usecase/graduation"
+	usecase "class-reminder-be/usecase/thesis"
 	"fmt"
 	"net/http"
 )
