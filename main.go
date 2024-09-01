@@ -10,6 +10,7 @@ import (
 	graduationHandler "class-reminder-be/handler/graduation"
 	notifHandler "class-reminder-be/handler/notif"
 	paymentReminderHandler "class-reminder-be/handler/paymentReminder"
+	thesisHandler "class-reminder-be/handler/thesis"
 	userHandler "class-reminder-be/handler/user"
 	middleware "class-reminder-be/middleware"
 
@@ -56,6 +57,10 @@ func main() {
 	apiCallerWithSession(config.V1Route+"graduation/show", graduationHandler.Show)
 	apiCaller(config.V1Route+"graduation/blast", graduationHandler.Blast)
 	apiCallerWithSession(config.V1Route+"graduation/send", graduationHandler.Send)
+
+	apiCallerWithSession(config.V1Route+"thesis/show", thesisHandler.Show)
+	apiCallerWithSession(config.V1Route+"thesis/blast", thesisHandler.Blast)
+	apiCallerWithSession(config.V1Route+"thesis/send", thesisHandler.Send)
 
 	apiCallerWithSession(config.V1Route+"dashboard/show", dashboardHandler.Show)
 	// API route with CORS middleware
