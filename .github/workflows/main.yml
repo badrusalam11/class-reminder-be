@@ -1,0 +1,64 @@
+name: Go CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.22.2'  # Set your Go version here
+
+    - name: Install dependencies
+      run: go mod tidy
+
+    - name: Run tests
+      run: go test ./...
+
+    - name: Build the application
+      run: go build -v .
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.22.2'  # Set your Go version here
+
+    - name: Decode and Save Private Key
+      env:
+        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      run: |
+        echo "${PRIVATE_KEY}" | base64 -d > ~/.ssh/private-key.pem
+        chmod 600 ~/.ssh/private-key.pem
+
+    - name: Build the application
+      run: go build -v .
+
+    - name: Deploy to server
+      env:
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        SERVER_DIR: ${{ secrets.SERVER_DIR }}
+      run: |
+        scp -i ~/.ssh/private-key.pem -o StrictHostKeyChecking=no ./your_app_name ${{ env.SERVER_USER }}@${{ env.SERVER_IP }}:${{ env.SERVER_DIR }}
+        ssh -i ~/.ssh/private-key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_IP }} "sudo systemctl restart class-reminder-be"
