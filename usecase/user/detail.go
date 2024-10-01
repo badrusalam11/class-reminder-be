@@ -10,6 +10,7 @@ import (
 func Detail(request model.DetailUserRequest) (*model.Result, error) {
 	// select data from database
 	nim := request.Nim
+	fmt.Println(nim)
 	data, err := database.GetDetailStudentInfo(nim)
 	fmt.Println(data)
 	if err != nil {
@@ -18,7 +19,6 @@ func Detail(request model.DetailUserRequest) (*model.Result, error) {
 	}
 
 	resultMap := make(map[string]*model.Result)
-	classArr := make([]int, 0)
 
 	for _, item := range data {
 		// Convert byte arrays to strings
@@ -26,40 +26,26 @@ func Detail(request model.DetailUserRequest) (*model.Result, error) {
 		nim := string(item["nim"].([]byte))
 		noHP := string(item["no_hp"].([]byte))
 		major := string(item["major"].([]byte))
-		classID := int(item["class_id"].(int64))
-		classTitle := string(item["class_title"].([]byte))
 		va_account := string(item["va_account"].([]byte))
 		tuition_fee := int(item["bill"].(int64))
 		last_payment_date := library.GetDateYMD(string(item["last_payment_date"].([]uint8)))
+		is_regis_graduation := int(item["is_regis_graduation"].(int64))
+		is_done_thesis := int(item["is_done_thesis"].(int64))
 
 		key := nim
-		// key := major + "_" + name + "_" + nim + "_" + noHP
-		if existingResult, exists := resultMap[key]; exists {
-			// If the entry already exists, add the class detail to the existing entry
-			existingResult.Class = append(existingResult.Class, model.ClassDetail{
-				ID:    classID,
-				Title: classTitle,
-			})
-			existingResult.ClassArr = append(existingResult.ClassArr, classID)
-			// existingResult.ClassStr = existingResult.ClassStr + "," + classTitle
-		} else {
-			// If the entry does not exist, create a new entry
-			newResult := model.Result{
-				Major: major,
-				Name:  name,
-				NIM:   nim,
-				NoHP:  noHP,
-				Class: []model.ClassDetail{{
-					ID:    classID,
-					Title: classTitle,
-				}},
-				ClassArr:        append(classArr, classID),
-				TuitionFee:      tuition_fee,
-				VaAccount:       va_account,
-				LastPaymentDate: last_payment_date,
-			}
-			resultMap[key] = &newResult
+
+		newResult := model.Result{
+			Major:             major,
+			Name:              name,
+			NIM:               nim,
+			NoHP:              noHP,
+			TuitionFee:        tuition_fee,
+			VaAccount:         va_account,
+			LastPaymentDate:   last_payment_date,
+			IsRegisGraduation: is_regis_graduation,
+			IsDoneThesis:      is_done_thesis,
 		}
+		resultMap[key] = &newResult
 	}
 
 	// Retrieve the first result from resultMap (assuming there's at least one result)

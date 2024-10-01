@@ -3,6 +3,7 @@ package library
 import (
 	model "class-reminder-be/model"
 	"encoding/json"
+	"math/rand"
 	"strconv"
 	"strings"
 	"time"
@@ -121,4 +122,13 @@ func IsDateInCurrentWeek(dateStr string) (bool, error) {
 	// Check if the given date is within the start and end of the week
 	isInWeek := date.After(startOfWeek) && date.Before(endOfWeek) || date.Equal(startOfWeek) || date.Equal(endOfWeek)
 	return isInWeek, nil
+}
+
+func GenerateVA() string {
+	min := 1000000000
+	max := 9999999999
+	number := rand.Intn(max-min+1) + min // Generate a random 10-digit number
+	//convert to string
+	vaString := strconv.Itoa(number)
+	return vaString
 }

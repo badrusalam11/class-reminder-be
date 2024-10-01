@@ -6,17 +6,17 @@ import (
 	"fmt"
 )
 
-func Edit(registerData model.EditUserRequest) error {
+func Edit(editData model.EditUserRequest) error {
 	// Update tbl_user_notif
 	err := database.EditStudent(
-		registerData.Name,
-		registerData.Nim,
-		registerData.Phone,
-		registerData.Major,
-		registerData.Class,
-		registerData.TuitionFee,
-		registerData.VaAccount,
-		registerData.LastPaymentDate,
+		editData.Name,
+		editData.Nim,
+		editData.Phone,
+		editData.Major,
+		editData.TuitionFee,
+		editData.LastPaymentDate,
+		editData.IsDoneThesis,
+		editData.IsRegisGraduation,
 	)
 	if err != nil {
 		fmt.Println("error", err)

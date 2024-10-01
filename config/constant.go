@@ -11,7 +11,7 @@ const (
 	DescSession = "Session habis, silahkan login kembali"
 
 	JwtKey      = "sadadakdmaksdksadak"
-	JwtDuration = 2
+	JwtDuration = 30
 
 	V1Route = "/api/v1/"
 )

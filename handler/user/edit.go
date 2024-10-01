@@ -6,6 +6,7 @@ import (
 	"class-reminder-be/model"
 	usecase "class-reminder-be/usecase/user"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -23,6 +24,9 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	jsonReq, _ := json.Marshal(request)
+	fmt.Println("edit req", string(jsonReq))
+
 	// do business logic
 	err = usecase.Edit(request)
 	if err != nil {

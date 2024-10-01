@@ -291,27 +291,17 @@ func GetCourseById(id int64) (map[string]interface{}, error) {
 	return data, nil
 }
 
-func RegisterStudent(name string, nim string, no_hp string, major string, class []int, tuition_fee int, va_account string, last_payment_date string) error {
+func RegisterStudent(name string, nim string, no_hp string, major string, tuition_fee int, va_account string, last_payment_date string, is_regis_graduation int, is_done_thesis int) error {
 	//insert to tbl_user_student
-	query := "INSERT INTO tbl_user_student (username, name, nim, major) VALUES (?, ?, ?, ?)"
-	_, err := helper.Db.Exec(query, nim, name, nim, major)
+	query := "INSERT INTO tbl_user_student (username, name, nim, major, is_regis_graduation, is_done_thesis) VALUES (?, ?, ?, ?,? ,?)"
+	_, err := helper.Db.Exec(query, nim, name, nim, major, is_regis_graduation, is_done_thesis)
 	if err != nil {
 		return err
 	}
 
-	//insert to tbl_user_event
-	for i := 0; i < len(class); i++ {
-		query = "INSERT INTO tbl_user_event (username, nim, id_event) VALUES (?,?,?)"
-		_, err = helper.Db.Exec(query, nim, nim, class[i])
-		if err != nil {
-			return err
-		}
-
-	}
-
 	// insert to tbl_user_notif
 	query = "INSERT INTO tbl_user_notif (username, nim, no_hp, last_update, is_allowed) VALUES (?, ?, ?, ?,?)"
-	_, err = helper.Db.Exec(query, nim, nim, no_hp, library.CurrTimestamp(), 1)
+	_, err = helper.Db.Exec(query, nim, nim, no_hp, last_payment_date, 1)
 	if err != nil {
 		return err
 	}
@@ -325,45 +315,13 @@ func RegisterStudent(name string, nim string, no_hp string, major string, class 
 	return nil
 }
 
-func EditStudent(name string, nim string, no_hp string, major string, class []int, tuition_fee int, va_account string, last_payment_date string) error {
+func EditStudent(name string, nim string, no_hp string, major string, tuition_fee int, last_payment_date string, is_done_thesis int, is_regis_graduation int) error {
 	//update to tbl_user_student
-	query := "UPDATE tbl_user_student SET username=?, name=?, nim=?, major=? WHERE nim=?"
-	_, err := helper.Db.Exec(query, nim, name, nim, major, nim)
+	query := "UPDATE tbl_user_student SET username=?, name=?, nim=?, major=?, is_regis_graduation=?, is_done_thesis=? WHERE nim=?"
+	_, err := helper.Db.Exec(query, nim, name, nim, major, is_regis_graduation, is_done_thesis, nim)
 	if err != nil {
 		return err
 	}
-
-	// delete tbl_user_event
-	query = "DELETE FROM tbl_user_event WHERE nim=?"
-	_, err = helper.Db.Exec(query, nim)
-	if err != nil {
-		return err
-	}
-
-	//insert to tbl_user_event
-	for i := 0; i < len(class); i++ {
-		query = "INSERT INTO tbl_user_event (username, nim, id_event) VALUES (?,?,?)"
-		_, err = helper.Db.Exec(query, nim, nim, class[i])
-		if err != nil {
-			return err
-		}
-
-	}
-
-	// insert to tbl_user_notif
-	query = "UPDATE tbl_user_notif SET username=?, nim=?, no_hp=?, last_update=?, is_allowed=? WHERE nim=?"
-	_, err = helper.Db.Exec(query, nim, nim, no_hp, library.CurrTimestamp(), 1, nim)
-	if err != nil {
-		return err
-	}
-
-	// insert to tbl_user_payment
-	query = "UPDATE tbl_user_payment SET bill=?, va_account=?, last_payment_date=? WHERE nim=?"
-	_, err = helper.Db.Exec(query, tuition_fee, va_account, last_payment_date, nim)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -400,13 +358,10 @@ func DeleteStudent(nim string) error {
 }
 
 func GetStudentInfo() ([]map[string]interface{}, error) {
-	query := `SELECT us.nim, us.name, un.no_hp, us.major, ue.id_event as class_id, e.title AS class_title FROM tbl_user_student us 
+	query := `SELECT us.nim, us.name, un.no_hp, us.major FROM tbl_user_student us 
 		JOIN tbl_user_notif un ON 
-		us.nim = un.nim
-		JOIN tbl_user_event ue ON
-		us.nim = ue.nim
-		JOIN tbl_event e ON
-		ue.id_event = e.id`
+		us.nim = un.nim ORDER BY us.id ASC
+		`
 	data, err := GeneralSelectRows(query)
 	if err != nil {
 		return nil, err
@@ -419,15 +374,11 @@ func GetStudentInfo() ([]map[string]interface{}, error) {
 }
 
 func GetDetailStudentInfo(nim string) ([]map[string]interface{}, error) {
-	query := `SELECT us.nim, us.name, un.no_hp, us.major, ue.id_event as class_id, e.title AS class_title,
+	query := `SELECT us.nim, us.name, un.no_hp, us.major, us.is_regis_graduation, us.is_done_thesis,
 		up.bill, up.va_account, up.last_payment_date
 	 FROM tbl_user_student us 
 		JOIN tbl_user_notif un ON 
 		us.nim = un.nim
-		JOIN tbl_user_event ue ON
-		us.nim = ue.nim
-		JOIN tbl_event e ON
-		ue.id_event = e.id 
 		JOIN tbl_user_payment up on
 		up.nim=us.nim
 		WHERE us.nim= ?
