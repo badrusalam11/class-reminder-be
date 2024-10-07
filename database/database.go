@@ -317,8 +317,14 @@ func RegisterStudent(name string, nim string, no_hp string, major string, tuitio
 
 func EditStudent(name string, nim string, no_hp string, major string, tuition_fee int, last_payment_date string, is_done_thesis int, is_regis_graduation int) error {
 	//update to tbl_user_student
-	query := "UPDATE tbl_user_student SET username=?, name=?, nim=?, major=?, is_regis_graduation=?, is_done_thesis=? WHERE nim=?"
-	_, err := helper.Db.Exec(query, nim, name, nim, major, is_regis_graduation, is_done_thesis, nim)
+	query := "UPDATE tbl_user_student SET username=?, name=?, nim=?, major=?, is_done_thesis=? WHERE nim=?"
+	_, err := helper.Db.Exec(query, nim, name, nim, major, is_done_thesis, nim)
+	if err != nil {
+		return err
+	}
+	// update to graduation
+	query2 := "UPDATE tbl_graduation SET is_registered=? WHERE nim=?"
+	_, err = helper.Db.Exec(query2, is_regis_graduation, nim)
 	if err != nil {
 		return err
 	}
@@ -358,9 +364,12 @@ func DeleteStudent(nim string) error {
 }
 
 func GetStudentInfo() ([]map[string]interface{}, error) {
-	query := `SELECT us.nim, us.name, un.no_hp, us.major FROM tbl_user_student us 
+	query := `SELECT us.nim, us.name, un.no_hp, us.major, g.is_registered as is_regis_graduation FROM tbl_user_student us 
 		JOIN tbl_user_notif un ON 
-		us.nim = un.nim ORDER BY us.id ASC
+		us.nim = un.nim 
+		JOIN tbl_graduation g ON
+		us.nim = g.nim
+		ORDER BY us.id ASC
 		`
 	data, err := GeneralSelectRows(query)
 	if err != nil {
@@ -374,13 +383,15 @@ func GetStudentInfo() ([]map[string]interface{}, error) {
 }
 
 func GetDetailStudentInfo(nim string) ([]map[string]interface{}, error) {
-	query := `SELECT us.nim, us.name, un.no_hp, us.major, us.is_regis_graduation, us.is_done_thesis,
-		up.bill, up.va_account, up.last_payment_date
+	query := `SELECT us.nim, us.name, un.no_hp, us.major, us.is_done_thesis,
+		up.bill, up.va_account, up.last_payment_date, g.is_registered as is_regis_graduation
 	 FROM tbl_user_student us 
 		JOIN tbl_user_notif un ON 
 		us.nim = un.nim
 		JOIN tbl_user_payment up on
 		up.nim=us.nim
+		JOIN tbl_graduation g ON 
+		us.nim=g.nim
 		WHERE us.nim= ?
 		`
 	data, err := GeneralSelectRows(query, nim)
