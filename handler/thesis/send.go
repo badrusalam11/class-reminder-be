@@ -4,7 +4,7 @@ import (
 	"class-reminder-be/config"
 	"class-reminder-be/library"
 	"class-reminder-be/model"
-	usecase "class-reminder-be/usecase/graduation"
+	usecase "class-reminder-be/usecase/thesis"
 	"encoding/json"
 	"fmt"
 	"net/http"

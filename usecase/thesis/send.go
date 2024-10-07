@@ -9,7 +9,7 @@ import (
 
 func Send(nim string) error {
 	// select data from tbl_user_notif
-	data, err := database.GetUserGraduation(nim)
+	data, err := database.GetUserThesisSpecific(nim)
 	if err != nil {
 		return err
 	}
@@ -30,7 +30,7 @@ func Send(nim string) error {
 	fmt.Println(data)
 
 	// Blast to WhatsApp
-	trxType := "Graduation"
+	trxType := "Thesis"
 	_, err = repository.SendToWhatsappSpecific(notifIDsString, data, trxType)
 	if err != nil {
 		return err

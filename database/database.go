@@ -620,7 +620,8 @@ func GetUserGraduation(nim string) (map[string]interface{}, error) {
 }
 
 func GetThesis() ([]map[string]interface{}, error) {
-	query := `SELECT t.*,name  FROM tbl_thesis t JOIN tbl_user_student us on us.nim=t.nim`
+	query := `SELECT t.*, us.major, name, is_registered FROM tbl_thesis t JOIN tbl_user_student us on us.nim=t.nim
+	JOIN tbl_graduation g ON us.nim=g.nim`
 	data, err := GeneralSelectRows(query)
 	if err != nil {
 		return nil, err
@@ -635,6 +636,19 @@ func GetUserThesis() ([]map[string]interface{}, error) {
 	query := `SELECT t.*,us.name,un.no_hp   FROM tbl_thesis t JOIN tbl_user_student us on us.nim=t.nim
 	JOIN tbl_user_notif un ON t.nim=un.nim`
 	data, err := GeneralSelectRows(query)
+	if err != nil {
+		return nil, err
+	}
+	if data == nil {
+		return nil, nil
+	}
+	return data, nil
+}
+
+func GetUserThesisSpecific(nim string) (map[string]interface{}, error) {
+	query := `SELECT t.*,us.name,un.no_hp   FROM tbl_thesis t JOIN tbl_user_student us on us.nim=t.nim
+	JOIN tbl_user_notif un ON t.nim=un.nim WHERE us.nim=?`
+	data, err := GeneralSelect(query, nim)
 	if err != nil {
 		return nil, err
 	}
