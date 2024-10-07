@@ -60,10 +60,12 @@ CREATE TABLE IF NOT EXISTS `tbl_content_notif` (
   PRIMARY KEY (`trx_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table db_class_reminder.tbl_content_notif: ~3 rows (approximately)
+-- Dumping data for table db_class_reminder.tbl_content_notif: ~5 rows (approximately)
 INSERT INTO `tbl_content_notif` (`trx_type`, `title`, `content`, `additional_data`) VALUES
 	('Course', 'Notifikasi kelas', 'Hi $name ($nim), kelas $class mu akan dimulai besok pukul $time, yuk persiapkan kebutuhan dan bahan kuliahmu sekarang!', '{"name":"required","nim":"required","class":"required", "time":"required"}'),
+	('Graduation', 'Notifikasi Pengingat Wisuda', 'Hallo $name, \nPendaftaran wisuda magister, sarjana, diploma dapat melalui website https://portal.perbanas.id\n\nSegera daftar periode wisuda ini pendaftaran ditutup $date ya.\n\nRegards, admin perbanas', '{"name":"required","date":"required"}'),
 	('Seminar', 'Notifikasi kelas', 'Hi, segera hadiri seminar $event besok dengan tema lingkungan.', '{"event":"required"}'),
+	('Thesis', 'Notifikasi Bimbingan Skripsi', 'Hallo $name,\nSegera lakukan bimbingan skripsimu ya 🙂 kamu bisa check bimbingan skripsi mu melalui portal http://sipso.perbanas.id/\n\nRegards, Admin Perbanas', '{"name":"required"}'),
 	('TuitionFee', 'Notifikasi Pengingat UKT', 'Hai $name ($nim)! Yuk bayar tagihan kuliah mu:\r\nVA: $va_account\r\nJumlah tagihan: $bill\r\nJatuh tempo: $due_date\r\nHiraukan notifikasi ini apabila kamu sudah membayarnya.', '{"name":"required","nim":"required","va_account":"required","bill":"required","due_date":"required"}');
 
 -- Dumping structure for table db_class_reminder.tbl_event
@@ -108,6 +110,20 @@ INSERT INTO `tbl_event_type` (`id`, `name`, `is_specific_user`, `trx_type`) VALU
 	(2, 'Seminar', 0, 'Seminar'),
 	(3, 'Tuition Fee reminder', 0, 'TuitionFee');
 
+-- Dumping structure for table db_class_reminder.tbl_graduation
+CREATE TABLE IF NOT EXISTS `tbl_graduation` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nim` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `is_registered` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nim` (`nim`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Dumping data for table db_class_reminder.tbl_graduation: ~2 rows (approximately)
+INSERT INTO `tbl_graduation` (`id`, `nim`, `is_registered`) VALUES
+	(1, '3332170020', 0),
+	(2, '3332170055', 1);
+
 -- Dumping structure for table db_class_reminder.tbl_job
 CREATE TABLE IF NOT EXISTS `tbl_job` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -133,6 +149,20 @@ INSERT INTO `tbl_job` (`id`, `job_name`, `job_id`, `id_event`) VALUES
 	(19, '71:title', '7a865915-5c05-449e-a07a-f1f3a1b730e0', 71),
 	(20, '72:title', '469a70f4-a3ad-4166-aa95-4902ad39f434', 72),
 	(21, '73:Payment_reminder', 'f03e6405-0985-4446-ba1d-e20be07e9338', 73);
+
+-- Dumping structure for table db_class_reminder.tbl_thesis
+CREATE TABLE IF NOT EXISTS `tbl_thesis` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nim` varchar(50) DEFAULT NULL,
+  `logbook` int DEFAULT NULL,
+  `last_attendance_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Dumping data for table db_class_reminder.tbl_thesis: ~2 rows (approximately)
+INSERT INTO `tbl_thesis` (`id`, `nim`, `logbook`, `last_attendance_date`) VALUES
+	(1, '3332170020', 1, '2024-09-01 21:23:05'),
+	(2, '3332170055', 8, '2024-09-02 21:23:05');
 
 -- Dumping structure for table db_class_reminder.tbl_trx_log
 CREATE TABLE IF NOT EXISTS `tbl_trx_log` (
@@ -182,8 +212,8 @@ CREATE TABLE IF NOT EXISTS `tbl_user` (
 
 -- Dumping data for table db_class_reminder.tbl_user: ~2 rows (approximately)
 INSERT INTO `tbl_user` (`id`, `username`, `password`, `token_key`, `last_login`) VALUES
-	(1, 'usertes', '$2a$12$FUiKbGDrpc.xs6lHM/LIEuYA3/p1hQTaUAuILfYoZ3cay7w6Ampie', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjQwMDExODIsInVzZXJuYW1lIjoidXNlcnRlcyJ9.YUYv_VZZ-am_SGV631Z4laILQmvTsq7J_1RT0TR3VUc', '2024-08-18 15:13:02'),
-	(2, 'usertes2', '$2a$12$FUiKbGDrpc.xs6lHM/LIEuYA3/p1hQTaUAuILfYoZ3cay7w6Ampie', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjQwMDAxMjMsInVzZXJuYW1lIjoidXNlcnRlczIifQ.KTE08Aa_rHQlx6t-bfHrXGL-yedMDQXhe0tM2U7Dshs', '2024-08-18 14:55:23');
+	(1, 'usertes', '$2a$12$FUiKbGDrpc.xs6lHM/LIEuYA3/p1hQTaUAuILfYoZ3cay7w6Ampie', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjgyODQ5MzAsInVzZXJuYW1lIjoidXNlcnRlcyJ9.l3jTNreqNdtj7fPKLOXNqJ4DAq4kba9QfP4pN8TXYOk', '2024-10-07 06:38:50'),
+	(2, 'usertes2', '$2a$12$FUiKbGDrpc.xs6lHM/LIEuYA3/p1hQTaUAuILfYoZ3cay7w6Ampie', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjgyODQwNjksInVzZXJuYW1lIjoidXNlcnRlczIifQ.0tqv1VrnAKmBtH4Sa21ghQmm2nVRXgH-CEKIuA8XBek', '2024-10-07 06:24:29');
 
 -- Dumping structure for table db_class_reminder.tbl_user_event
 CREATE TABLE IF NOT EXISTS `tbl_user_event` (
@@ -221,15 +251,21 @@ CREATE TABLE IF NOT EXISTS `tbl_user_notif` (
   PRIMARY KEY (`id`),
   KEY `username` (`username`),
   KEY `nim` (`nim`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table db_class_reminder.tbl_user_notif: ~5 rows (approximately)
+-- Dumping data for table db_class_reminder.tbl_user_notif: ~12 rows (approximately)
 INSERT INTO `tbl_user_notif` (`id`, `username`, `nim`, `notif_id`, `no_hp`, `last_update`, `is_allowed`) VALUES
 	(16, '3332170020', '3332170020', NULL, '6287871855339', '2024-03-03 07:51:36', 1),
 	(20, '3332170055', '3332170055', NULL, '0802391293312', '2024-02-17 15:48:53', 0),
-	(23, '32121223323232332', '32121223323232332', NULL, '62895326667443', '2024-03-02 16:14:28', 1),
 	(24, '2312121313232121', '2312121313232121', NULL, '0895326667443', '2024-03-03 06:17:49', 0),
-	(25, '272727266161', '272727266161', NULL, '0895326667443', '2024-03-03 05:53:09', 0);
+	(25, '272727266161', '272727266161', NULL, '0895326667443', '2024-03-03 05:53:09', 0),
+	(27, '1231231321314', '1231231321314', NULL, '080218231023', '2024-09-16 14:00:43', 1),
+	(28, '1122321434', '1122321434', NULL, '08091283813213', '2024-09-16 14:30:00', 1),
+	(29, '1239343493', '1239343493', NULL, '08012345956', '2024-09-16 14:38:49', 1),
+	(31, '12301301230', '12301301230', NULL, '2132130', '2024-09-16 14:53:53', 1),
+	(33, '1231231024123', '1231231024123', NULL, '087871855339', '2024-09-16 15:57:32', 1),
+	(35, '12312310241230', '12312310241230', NULL, '087871855339', '2024-09-16 16:01:02', 1),
+	(38, '1231240312310', '1231240312310', NULL, '0809019301930', '2024-02-19 17:00:00', 1);
 
 -- Dumping structure for table db_class_reminder.tbl_user_payment
 CREATE TABLE IF NOT EXISTS `tbl_user_payment` (
@@ -239,16 +275,20 @@ CREATE TABLE IF NOT EXISTS `tbl_user_payment` (
   `va_account` varchar(50) DEFAULT NULL,
   `last_payment_date` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table db_class_reminder.tbl_user_payment: ~6 rows (approximately)
+-- Dumping data for table db_class_reminder.tbl_user_payment: ~10 rows (approximately)
 INSERT INTO `tbl_user_payment` (`id`, `nim`, `bill`, `va_account`, `last_payment_date`) VALUES
 	(1, '3332170020', 5000000, '123123212', '2024-01-16 17:00:00'),
 	(5, '3332170055', 4500000, '1231093019', '2024-02-17 15:48:53'),
-	(7, '', 0, '', '2024-03-02 16:13:20'),
-	(8, '32121223323232332', 0, '', '2024-03-02 16:14:28'),
 	(9, '2312121313232121', 5000000, '2123232322', '2024-02-01 17:00:00'),
-	(10, '272727266161', 2000000, '2726261661', '2024-01-31 17:00:00');
+	(10, '272727266161', 2000000, '2726261661', '2024-01-31 17:00:00'),
+	(12, '1231231321314', 10000000, '1239539140', '2024-02-10 17:00:00'),
+	(13, '1122321434', 12500000, '3050544166', '2024-02-01 17:00:00'),
+	(14, '1239343493', 2000000, '3284774763', '2023-12-31 17:00:00'),
+	(15, '12301301230', 1500000, '4556345483', '2023-12-31 17:00:00'),
+	(16, '12312310241230', 5000000, '8833924199', '2024-09-15 17:00:00'),
+	(19, '1231240312310', 2000000, '8894568243', '2024-02-19 17:00:00');
 
 -- Dumping structure for table db_class_reminder.tbl_user_student
 CREATE TABLE IF NOT EXISTS `tbl_user_student` (
@@ -257,19 +297,25 @@ CREATE TABLE IF NOT EXISTS `tbl_user_student` (
   `nim` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `major` varchar(50) DEFAULT NULL,
+  `is_regis_graduation` int DEFAULT '0',
+  `is_done_thesis` int DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `nim` (`nim`),
   KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table db_class_reminder.tbl_user_student: ~6 rows (approximately)
-INSERT INTO `tbl_user_student` (`id`, `username`, `nim`, `name`, `major`) VALUES
-	(31, '3332170020', '3332170020', 'badru', 'elektro'),
-	(37, '3332170055', '3332170055', 'rizal', 'IT'),
-	(39, '', '', 'Muhammad Badru salam', ''),
-	(40, '32121223323232332', '32121223323232332', 'khijab', ''),
-	(41, '2312121313232121', '2312121313232121', 'Khijab', 'Sistem Informasi'),
-	(42, '272727266161', '272727266161', 'Ninda', 'Sistem informasi');
+-- Dumping data for table db_class_reminder.tbl_user_student: ~11 rows (approximately)
+INSERT INTO `tbl_user_student` (`id`, `username`, `nim`, `name`, `major`, `is_regis_graduation`, `is_done_thesis`) VALUES
+	(31, '3332170020', '3332170020', 'badru', 'elektro', 0, 0),
+	(37, '3332170055', '3332170055', 'rizal', 'IT', 0, 0),
+	(41, '2312121313232121', '2312121313232121', 'Khijab', 'Sistem Informasi', 0, 0),
+	(42, '272727266161', '272727266161', 'Ninda', 'Sistem informasi', 0, 0),
+	(44, '1231231321314', '1231231321314', 'ichsan', 'teknik informatika', 0, 0),
+	(45, '1122321434', '1122321434', 'Darius', 'Teknik Mesin', 0, 0),
+	(46, '1239343493', '1239343493', 'Mulia', 'Teknik Metalurgi', 0, 0),
+	(49, '12301301230', '12301301230', 'new user', 'Pertanian', 0, 0),
+	(55, '12312310241230', '12312310241230', 'taufik', 'S1 - Teknik Informatika2', 0, 0),
+	(58, '1231240312310', '1231240312310', 'Willy', 'Elektro', 0, 0);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
