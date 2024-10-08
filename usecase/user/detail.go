@@ -31,6 +31,7 @@ func Detail(request model.DetailUserRequest) (*model.Result, error) {
 		last_payment_date := library.GetDateYMD(string(item["last_payment_date"].([]uint8)))
 		is_regis_graduation := int(item["is_regis_graduation"].(int64))
 		is_done_thesis := int(item["is_done_thesis"].(int64))
+		logbook := int(item["logbook"].(int64))
 
 		key := nim
 
@@ -44,6 +45,7 @@ func Detail(request model.DetailUserRequest) (*model.Result, error) {
 			LastPaymentDate:   last_payment_date,
 			IsRegisGraduation: is_regis_graduation,
 			IsDoneThesis:      is_done_thesis,
+			Logbook:           logbook,
 		}
 		resultMap[key] = &newResult
 	}

@@ -15,7 +15,7 @@ func Edit(editData model.EditUserRequest) error {
 		editData.Major,
 		editData.TuitionFee,
 		editData.LastPaymentDate,
-		editData.IsDoneThesis,
+		editData.Logbook,
 		editData.IsRegisGraduation,
 	)
 	if err != nil {

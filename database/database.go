@@ -291,16 +291,16 @@ func GetCourseById(id int64) (map[string]interface{}, error) {
 	return data, nil
 }
 
-func RegisterStudent(name string, nim string, no_hp string, major string, tuition_fee int, va_account string, last_payment_date string, is_regis_graduation int, is_done_thesis int) error {
+func RegisterStudent(name string, nim string, no_hp string, major string, tuition_fee int, va_account string, last_payment_date string, is_regis_graduation int, logbook int) error {
 	//insert to tbl_user_student
-	query := "INSERT INTO tbl_user_student (username, name, nim, major, is_regis_graduation, is_done_thesis) VALUES (?, ?, ?, ?,? ,?)"
-	_, err := helper.Db.Exec(query, nim, name, nim, major, is_regis_graduation, is_done_thesis)
+	query := "INSERT INTO tbl_user_student (username, name, nim, major, is_regis_graduation) VALUES (?, ?, ?, ?, ?)"
+	_, err := helper.Db.Exec(query, nim, name, nim, major, is_regis_graduation)
 	if err != nil {
 		return err
 	}
 
 	// insert to tbl_user_notif
-	query = "INSERT INTO tbl_user_notif (username, nim, no_hp, last_update, is_allowed) VALUES (?, ?, ?, ?,?)"
+	query = "INSERT INTO tbl_user_notif (username, nim, no_hp, last_update, is_allowed) VALUES (?, ?, ?, ?, ?)"
 	_, err = helper.Db.Exec(query, nim, nim, no_hp, last_payment_date, 1)
 	if err != nil {
 		return err
@@ -312,19 +312,41 @@ func RegisterStudent(name string, nim string, no_hp string, major string, tuitio
 	if err != nil {
 		return err
 	}
+
+	// insert to tbl_thesis
+	query = "INSERT INTO tbl_thesis (nim, logbook, last_attendance_date) VALUES (?,?,?)"
+	_, err = helper.Db.Exec(query, nim, logbook, last_payment_date)
+	if err != nil {
+		fmt.Println("error thesis")
+		return nil
+	}
+
+	// insert to tbl_graduation
+	query = "INSERT INTO tbl_graduation (nim, is_registered) VALUES (?,?)"
+	_, err = helper.Db.Exec(query, nim, is_regis_graduation)
+	if err != nil {
+		return nil
+	}
 	return nil
 }
 
-func EditStudent(name string, nim string, no_hp string, major string, tuition_fee int, last_payment_date string, is_done_thesis int, is_regis_graduation int) error {
+func EditStudent(name string, nim string, no_hp string, major string, tuition_fee int, last_payment_date string, logbook int, is_regis_graduation int) error {
 	//update to tbl_user_student
-	query := "UPDATE tbl_user_student SET username=?, name=?, nim=?, major=?, is_done_thesis=? WHERE nim=?"
-	_, err := helper.Db.Exec(query, nim, name, nim, major, is_done_thesis, nim)
+	query := "UPDATE tbl_user_student SET username=?, name=?, nim=?, major=? WHERE nim=?"
+	_, err := helper.Db.Exec(query, nim, name, nim, major, nim)
 	if err != nil {
 		return err
 	}
 	// update to graduation
-	query2 := "UPDATE tbl_graduation SET is_registered=? WHERE nim=?"
-	_, err = helper.Db.Exec(query2, is_regis_graduation, nim)
+	query = "UPDATE tbl_graduation SET is_registered=? WHERE nim=?"
+	_, err = helper.Db.Exec(query, is_regis_graduation, nim)
+	if err != nil {
+		return err
+	}
+
+	// update to tbl_thesis
+	query = "UPDATE tbl_thesis SET logbook=? WHERE nim=?"
+	_, err = helper.Db.Exec(query, logbook, nim)
 	if err != nil {
 		return err
 	}
@@ -364,11 +386,17 @@ func DeleteStudent(nim string) error {
 }
 
 func GetStudentInfo() ([]map[string]interface{}, error) {
-	query := `SELECT us.nim, us.name, un.no_hp, us.major, g.is_registered as is_regis_graduation FROM tbl_user_student us 
+	query := `SELECT us.nim, us.name, un.no_hp, us.major, us.is_done_thesis,
+		up.bill, up.va_account, up.last_payment_date, g.is_registered as is_regis_graduation, logbook
+	 FROM tbl_user_student us 
 		JOIN tbl_user_notif un ON 
-		us.nim = un.nim 
-		JOIN tbl_graduation g ON
-		us.nim = g.nim
+		us.nim = un.nim
+		JOIN tbl_user_payment up on
+		up.nim=us.nim
+		JOIN tbl_graduation g ON 
+		us.nim=g.nim
+		JOIN tbl_thesis t ON
+		us.nim=t.nim
 		ORDER BY us.id ASC
 		`
 	data, err := GeneralSelectRows(query)
@@ -384,7 +412,7 @@ func GetStudentInfo() ([]map[string]interface{}, error) {
 
 func GetDetailStudentInfo(nim string) ([]map[string]interface{}, error) {
 	query := `SELECT us.nim, us.name, un.no_hp, us.major, us.is_done_thesis,
-		up.bill, up.va_account, up.last_payment_date, g.is_registered as is_regis_graduation
+		up.bill, up.va_account, up.last_payment_date, g.is_registered as is_regis_graduation, logbook
 	 FROM tbl_user_student us 
 		JOIN tbl_user_notif un ON 
 		us.nim = un.nim
@@ -392,6 +420,8 @@ func GetDetailStudentInfo(nim string) ([]map[string]interface{}, error) {
 		up.nim=us.nim
 		JOIN tbl_graduation g ON 
 		us.nim=g.nim
+		JOIN tbl_thesis t ON
+		us.nim=t.nim
 		WHERE us.nim= ?
 		`
 	data, err := GeneralSelectRows(query, nim)

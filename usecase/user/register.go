@@ -19,7 +19,7 @@ func Register(registerData model.RegisterUserRequest) error {
 		virtualAccount,
 		registerData.LastPaymentDate,
 		registerData.IsRegisGraduation,
-		registerData.IsDoneThesis,
+		registerData.Logbook,
 	)
 	if err != nil {
 		fmt.Println("error", err)

@@ -10,7 +10,7 @@ type RegisterUserRequest struct {
 	// VaAccount       string `json:"va_account" validate:"required"`
 	LastPaymentDate   string `json:"last_payment_date"`
 	IsRegisGraduation int    `json:"is_regis_graduation" validate:"required"`
-	IsDoneThesis      int    `json:"is_done_thesis" validate:"required"`
+	Logbook           int    `json:"logbook" validate:"required"`
 }
 
 type EditUserRequest struct {
@@ -22,7 +22,7 @@ type EditUserRequest struct {
 	VaAccount         string `json:"va_account"`
 	LastPaymentDate   string `json:"last_payment_date"`
 	IsRegisGraduation int    `json:"is_regis_graduation" validate:"required"`
-	IsDoneThesis      int    `json:"is_done_thesis" validate:"required"`
+	Logbook           int    `json:"logbook" validate:"required"`
 }
 
 type DetailUserRequest struct {
@@ -48,4 +48,5 @@ type Result struct {
 	LastPaymentDate   string `json:"last_payment_date"`
 	IsRegisGraduation int    `json:"is_regis_graduation" validate:"required"`
 	IsDoneThesis      int    `json:"is_done_thesis" validate:"required"`
+	Logbook           int    `json:"logbook" validate:"required"`
 }
