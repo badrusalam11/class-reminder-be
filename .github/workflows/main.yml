@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:   # Add this line to allow manual runs
 
 jobs:
   build:
