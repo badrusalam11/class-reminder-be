@@ -344,6 +344,13 @@ func EditStudent(name string, nim string, no_hp string, major string, tuition_fe
 		return err
 	}
 
+	// update to user_notif
+	query = "UPDATE tbl_user_notif SET no_hp=? WHERE nim=?"
+	_, err = helper.Db.Exec(query, no_hp, nim)
+	if err != nil {
+		return err
+	}
+
 	// update to tbl_thesis
 	query = "UPDATE tbl_thesis SET logbook=? WHERE nim=?"
 	_, err = helper.Db.Exec(query, logbook, nim)
