@@ -7,11 +7,12 @@ services:
     ports:
       - "9090:9090"
     env_file:
-      - .env   # load your env vars from this file
+      - .env
     volumes:
-      - ./config.json:/app/config.json  # ensure config.json is accessible
+      - ./config.json:/app/config.json
     depends_on:
       - rundeck
+    restart: unless-stopped
 
   rundeck:
     image: rundeck/rundeck:SNAPSHOT
@@ -21,11 +22,10 @@ services:
     environment:
       RUNDECK_GRAILS_URL: http://localhost:4440
       RUNDECK_SERVER_URL: http://localhost:4440
-      # You can add Rundeck admin user and password via env vars:
       RUNDECK_ADMIN_PASSWORD: admin
-      # Add other Rundeck env vars as needed
     volumes:
       - rundeck_data:/home/rundeck/server/data
+    restart: unless-stopped
 
 volumes:
   rundeck_data:
