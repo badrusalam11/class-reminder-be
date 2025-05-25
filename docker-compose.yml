@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  class-reminder-be:
+    build: .
+    container_name: class-reminder-be
+    ports:
+      - "9090:9090"
+    env_file:
+      - .env   # load your env vars from this file
+    volumes:
+      - ./config.json:/app/config.json  # ensure config.json is accessible
+    depends_on:
+      - rundeck
+
+  rundeck:
+    image: rundeck/rundeck:SNAPSHOT
+    container_name: rundeck
+    ports:
+      - "4440:4440"
+    environment:
+      RUNDECK_GRAILS_URL: http://localhost:4440
+      RUNDECK_SERVER_URL: http://localhost:4440
+      # You can add Rundeck admin user and password via env vars:
+      RUNDECK_ADMIN_PASSWORD: admin
+      # Add other Rundeck env vars as needed
+    volumes:
+      - rundeck_data:/home/rundeck/server/data
+
+volumes:
+  rundeck_data:
