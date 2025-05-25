@@ -1,5 +1,6 @@
 # Installation
 - install mysql
+- install docker
 - execute the sql file in dump/db_class_reminder.sql
 
 # Build docker image
